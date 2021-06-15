@@ -11,7 +11,7 @@
     [Route("[controller]")]
     public class ToDoItemsController : ControllerBase
     {
-        private readonly List<ToDoItem> toDoItems = new List<ToDoItem>()
+        private static readonly List<ToDoItem> ToDoItems = new List<ToDoItem>()
         {
             new ToDoItem
             {
@@ -34,13 +34,13 @@
         [HttpGet]
         public ActionResult<IEnumerable<ToDoItem>> Get()
         {
-            return this.toDoItems;
+            return ToDoItems;
         }
 
         [HttpGet("{id}")]
         public ActionResult<ToDoItem> Get(string id)
         {
-            var selectedItem = this.toDoItems
+            var selectedItem = ToDoItems
                 .SingleOrDefault(x => x.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
 
             if (selectedItem == null)
@@ -49,6 +49,24 @@
             }
 
             return selectedItem;
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Put(string id, ToDoItemRequest toDoItemRequest)
+        {
+            var selectedItem = ToDoItems
+                .SingleOrDefault(x => x.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+
+            if (selectedItem == null)
+            {
+                return NotFound();
+            }
+
+            selectedItem.Name = toDoItemRequest.Name;
+            selectedItem.Description = toDoItemRequest.Description;
+            selectedItem.IsComplete = toDoItemRequest.IsComplete;
+
+            return NoContent();
         }
     }
 }
