@@ -52,7 +52,7 @@
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(string id, ToDoItemRequest toDoItemRequest)
+        public IActionResult Put(string id, ToDoItemRequest request)
         {
             var selectedItem = ToDoItems
                 .SingleOrDefault(x => x.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
@@ -62,11 +62,27 @@
                 return NotFound();
             }
 
-            selectedItem.Name = toDoItemRequest.Name;
-            selectedItem.Description = toDoItemRequest.Description;
-            selectedItem.IsComplete = toDoItemRequest.IsComplete;
+            selectedItem.Name = request.Name;
+            selectedItem.Description = request.Description;
+            selectedItem.IsComplete = request.IsComplete;
 
             return NoContent();
+        }
+
+        public ActionResult<ToDoItem> Post(ToDoItemRequest request)
+        {
+            var toDoItem = new ToDoItem
+            {
+                Id = Guid.NewGuid().ToString(),
+                AccountId = Guid.NewGuid().ToString(),
+                Name = request.Name,
+                Description = request.Description,
+                IsComplete = request.IsComplete,
+            };
+
+            ToDoItems.Add(toDoItem);
+
+            return CreatedAtAction(nameof(Post), toDoItem);
         }
     }
 }
