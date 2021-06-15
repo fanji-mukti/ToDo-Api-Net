@@ -1,19 +1,7 @@
-﻿using System;
-
-namespace WebApi.Models
+﻿namespace WebApi.Models
 {
-    public class ToDoItem : IToDoItemRequest
+    public interface IToDoItemRequest
     {
-        /// <summary>
-        /// Get the to-do item id.
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
-        /// Get the account Id that associate with the to-do item.
-        /// </summary>
-        public string AccountId { get; set; }
-
         /// <summary>
         /// Get the name of the to-do item.
         /// </summary>

@@ -1,5 +1,6 @@
 ﻿namespace WebApi.Controllers
 {
+    using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
     using System;
     using System.Collections.Generic;
@@ -67,6 +68,22 @@
             selectedItem.IsComplete = request.IsComplete;
 
             return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public IActionResult Patch(string id, JsonPatchDocument<IToDoItemRequest> request)
+        {
+            var selectedItem = ToDoItems
+                .SingleOrDefault(x => x.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+
+            if (selectedItem == null)
+            {
+                return NotFound();
+            }
+
+            request.ApplyTo(selectedItem);
+
+            return Ok(selectedItem);
         }
 
         public ActionResult<ToDoItem> Post(ToDoItemRequest request)
