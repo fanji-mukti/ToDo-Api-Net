@@ -9,7 +9,7 @@
     using WebApi.Models;
 
     [ApiController]
-    [Route("[controller]")]
+    [Route("api")]
     public class ToDoItemsController : ControllerBase
     {
         private static readonly List<ToDoItem> ToDoItems = new List<ToDoItem>()
@@ -33,13 +33,15 @@
         };
 
         [HttpGet]
+        [Route("[controller]")]
         public ActionResult<IEnumerable<ToDoItem>> Get()
         {
             return ToDoItems;
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<ToDoItem> Get(string id)
+        [HttpGet]
+        [Route("accounts/{accountId}/[controller]/{id}")]
+        public ActionResult<ToDoItem> Get(string accountId, string id)
         {
             var selectedItem = ToDoItems
                 .SingleOrDefault(x => x.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
@@ -53,6 +55,7 @@
         }
 
         [HttpPut("{id}")]
+        [Route("[controller]")]
         public IActionResult Put(string id, ToDoItemRequest request)
         {
             var selectedItem = ToDoItems
@@ -71,6 +74,7 @@
         }
 
         [HttpPatch("{id}")]
+        [Route("[controller]")]
         public IActionResult Patch(string id, JsonPatchDocument<IToDoItemRequest> request)
         {
             var selectedItem = ToDoItems
@@ -86,6 +90,8 @@
             return Ok(selectedItem);
         }
 
+        [HttpPost]
+        [Route("[controller]")]
         public ActionResult<ToDoItem> Post(ToDoItemRequest request)
         {
             var toDoItem = new ToDoItem
