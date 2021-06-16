@@ -6,16 +6,16 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using WebApi.Models;
+    using WebApi.Models.V1;
 
     [ApiController]
     [Route("api/v{version:apiVersion}")]
     [ApiVersion("1.0")]
     public class ToDoItemsController : ControllerBase
     {
-        private static readonly List<ToDoItem> ToDoItems = new List<ToDoItem>()
+        private static readonly List<ToDoItemResponse> ToDoItems = new List<ToDoItemResponse>()
         {
-            new ToDoItem
+            new ToDoItemResponse
             {
                 Id = "1",
                 AccountId = "account_1",
@@ -23,7 +23,7 @@
                 Description = "Learn .Net 5 by creating a simple CRUD Web API",
                 IsComplete = false,
             },
-            new ToDoItem
+            new ToDoItemResponse
             {
                 Id = "2",
                 AccountId = "account_1",
@@ -35,14 +35,14 @@
 
         [HttpGet]
         [Route("[controller]")]
-        public ActionResult<IEnumerable<ToDoItem>> Get()
+        public ActionResult<IEnumerable<ToDoItemResponse>> Get()
         {
             return ToDoItems;
         }
 
         [HttpGet]
         [Route("accounts/{accountId}/[controller]/{id}")]
-        public ActionResult<ToDoItem> Get(string accountId, string id)
+        public ActionResult<ToDoItemResponse> Get(string accountId, string id)
         {
             var selectedItem = ToDoItems
                 .SingleOrDefault(x => x.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
@@ -55,9 +55,9 @@
             return selectedItem;
         }
 
-        [HttpPut("{id}")]
-        [Route("[controller]")]
-        public IActionResult Put(string id, ToDoItemRequest request)
+        [HttpPut]
+        [Route("accounts/{accountId}/[controller]/{id}")]
+        public IActionResult Put(string accountId, string id, ToDoItemRequest request)
         {
             var selectedItem = ToDoItems
                 .SingleOrDefault(x => x.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
@@ -74,9 +74,9 @@
             return NoContent();
         }
 
-        [HttpPatch("{id}")]
-        [Route("[controller]")]
-        public IActionResult Patch(string id, JsonPatchDocument<IToDoItemRequest> request)
+        [HttpPatch]
+        [Route("accounts/{accountId}/[controller]/{id}")]
+        public IActionResult Patch(string accountId, string id, JsonPatchDocument<IUpdatableToDoItemDTO> request)
         {
             var selectedItem = ToDoItems
                 .SingleOrDefault(x => x.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
@@ -92,13 +92,13 @@
         }
 
         [HttpPost]
-        [Route("[controller]")]
-        public ActionResult<ToDoItem> Post(ToDoItemRequest request)
+        [Route("accounts/{accountId}/[controller]")]
+        public ActionResult<ToDoItemResponse> Post(string accountId, ToDoItemRequest request)
         {
-            var toDoItem = new ToDoItem
+            var toDoItem = new ToDoItemResponse
             {
                 Id = Guid.NewGuid().ToString(),
-                AccountId = Guid.NewGuid().ToString(),
+                AccountId = accountId,
                 Name = request.Name,
                 Description = request.Description,
                 IsComplete = request.IsComplete,
