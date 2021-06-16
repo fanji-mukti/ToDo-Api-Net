@@ -34,10 +34,14 @@
         };
 
         [HttpGet]
-        [Route("[controller]")]
-        public ActionResult<IEnumerable<ToDoItemResponse>> Get()
+        [Route("accounts/{accountId}/[controller]")]
+        public ActionResult<IEnumerable<ToDoItemResponse>> Get(string accountId)
         {
-            return ToDoItems;
+            var selectedItem = ToDoItems
+                .Where(x => x.AccountId.Equals(accountId, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            return selectedItem;
         }
 
         [HttpGet]
