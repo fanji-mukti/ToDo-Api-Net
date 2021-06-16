@@ -2,6 +2,8 @@ namespace WebApi
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Versioning;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -21,6 +23,11 @@ namespace WebApi
         {
 
             services
+                .AddApiVersioning(config =>
+                {
+                    config.DefaultApiVersion = new ApiVersion(1, 0);
+                    config.AssumeDefaultVersionWhenUnspecified = true;
+                })
                 .AddControllers()
                 .AddNewtonsoftJson();
 
@@ -41,7 +48,6 @@ namespace WebApi
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseAuthorization();

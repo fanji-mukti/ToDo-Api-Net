@@ -9,7 +9,8 @@
     using WebApi.Models;
 
     [ApiController]
-    [Route("api")]
+    [Route("api/v{version:apiVersion}")]
+    [ApiVersion("1.0")]
     public class ToDoItemsController : ControllerBase
     {
         private static readonly List<ToDoItem> ToDoItems = new List<ToDoItem>()
