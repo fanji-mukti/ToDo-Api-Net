@@ -1,4 +1,4 @@
-﻿namespace WebApi.Controllers
+﻿namespace WebApi.Controllers.V1
 {
     using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
