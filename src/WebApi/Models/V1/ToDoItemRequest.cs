@@ -1,20 +1,23 @@
 ﻿namespace WebApi.Models.V1
 {
+    /// <summary>
+    /// A class representing of to-do item request.
+    /// </summary>
     public sealed class ToDoItemRequest : IUpdatableToDoItemDTO
     {
         /// <summary>
-        /// Get the name of the to-do item.
+        /// Gets the name of the to-do item.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; init; }
 
         /// <summary>
-        /// Get the description of the to-do item.
+        /// Gets the description of the to-do item.
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; init; }
 
         /// <summary>
-        /// Get the value indicating whether the to-do item is complete.
+        /// Gets a value indicating whether the to-do item is complete.
         /// </summary>
-        public bool IsComplete { get; set; }
+        public bool IsComplete { get; init; }
     }
 }
