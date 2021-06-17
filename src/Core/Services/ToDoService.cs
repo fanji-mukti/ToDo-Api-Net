@@ -7,6 +7,9 @@
     using Core.Models;
     using EnsureThat;
 
+    /// <summary>
+    /// Provides functionality related to to-do item.
+    /// </summary>
     public sealed class ToDoService : IToDoService
     {
         private static readonly List<ToDoItem> ToDoItems = new List<ToDoItem>()
@@ -29,7 +32,25 @@
             },
         };
 
-        ///<inheritdoc/>
+        /// <inheritdoc/>
+        public Task<ToDoItem> CreateAsync(ToDoItem itemToCreate)
+        {
+            EnsureArg.IsNotNull(itemToCreate, nameof(itemToCreate));
+
+            var createItem = new ToDoItem
+            {
+                Id = Guid.NewGuid().ToString(),
+                AccountId = itemToCreate.AccountId,
+                Name = itemToCreate.Name,
+                Description = itemToCreate.Description,
+                IsComplete = itemToCreate.IsComplete,
+            };
+
+            ToDoItems.Add(createItem);
+            return Task.FromResult(createItem);
+        }
+
+        /// <inheritdoc/>
         public Task<IEnumerable<ToDoItem>> RetrieveAsync(string accountId)
         {
             EnsureArg.IsNotNullOrWhiteSpace(accountId, nameof(accountId));
@@ -40,7 +61,7 @@
             return Task.FromResult(selectedItems);
         }
 
-        ///<inheritdoc/>
+        /// <inheritdoc/>
         public Task<ToDoItem> RetrieveAsync(string accountId, string id)
         {
             EnsureArg.IsNotNullOrWhiteSpace(accountId, nameof(accountId));
@@ -51,6 +72,22 @@
                     && item.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
 
             return Task.FromResult(selectedItem);
+        }
+
+        /// <inheritdoc/>
+        public Task UpdateAsync(ToDoItem itemToUpdate)
+        {
+            EnsureArg.IsNotNull(itemToUpdate, nameof(itemToUpdate));
+
+            var selectedItem = ToDoItems
+                .Single(item => item.AccountId.Equals(itemToUpdate.AccountId, StringComparison.OrdinalIgnoreCase)
+                    && item.Id.Equals(itemToUpdate.Id, StringComparison.OrdinalIgnoreCase));
+
+            selectedItem.Name = itemToUpdate.Name;
+            selectedItem.Description = itemToUpdate.Description;
+            selectedItem.IsComplete = itemToUpdate.IsComplete;
+
+            return Task.CompletedTask;
         }
     }
 }
