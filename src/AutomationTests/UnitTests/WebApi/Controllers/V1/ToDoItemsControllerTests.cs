@@ -12,21 +12,22 @@
 
     public sealed class ToDoItemsControllerTests
     {
+        private const string RequestedAccountId = "account-1";
+        private const string RequestedToDoItemId = "todo-itemid-1";
+
         private readonly ToDoItemsControllerSteps steps = new ToDoItemsControllerSteps();
 
         [Fact]
         public async Task GetWithAccountId_ToDoItemsFound_ReturnCollectionOfToDoItemResponses()
         {
-            var requestedAccountId = "account-1";
-
             var toDoItems = new[]
             {
                 new ToDoItemBuilder()
-                    .WithAccountId(requestedAccountId)
+                    .WithAccountId(RequestedAccountId)
                     .Build(),
                 new ToDoItemBuilder()
                     .WithId("2")
-                    .WithAccountId(requestedAccountId)
+                    .WithAccountId(RequestedAccountId)
                     .Build(),
             };
 
@@ -34,8 +35,28 @@
                 .Select(item => new ToDoItemResponseBuilder().FromToDoItem(item).Build());
 
             await this.steps
-                .GivenIHaveTheFollowingToDoItems(requestedAccountId, toDoItems)
-                .WhenICallGet(requestedAccountId)
+                .GivenIHaveTheFollowingToDoItems(RequestedAccountId, toDoItems)
+                .WhenICallGet(RequestedAccountId)
+                .ConfigureAwait(false);
+
+            this.steps.ThenTheActionResultValueShouldBe(expected);
+        }
+
+        [Fact]
+        public async Task GetWithAccountIdAndId_ToDoItemFound_ReturnToDoItemResponse()
+        {
+            var toDoItem = new ToDoItemBuilder()
+                .WithId(RequestedToDoItemId)
+                .WithAccountId(RequestedAccountId)
+                .Build();
+
+            var expected = new ToDoItemResponseBuilder()
+                .FromToDoItem(toDoItem)
+                .Build();
+
+            await this.steps
+                .GivenIHaveTheFollowingToDoItem(RequestedAccountId, RequestedToDoItemId, toDoItem)
+                .WhenICallGet(RequestedAccountId, RequestedToDoItemId)
                 .ConfigureAwait(false);
 
             this.steps.ThenTheActionResultValueShouldBe(expected);

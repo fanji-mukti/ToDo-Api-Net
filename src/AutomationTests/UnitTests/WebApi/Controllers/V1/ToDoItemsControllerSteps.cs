@@ -35,10 +35,25 @@
             return this;
         }
 
+        public ToDoItemsControllerSteps GivenIHaveTheFollowingToDoItem(string accountId, string id, ToDoItem toDoItem)
+        {
+            this.mockService
+                .Setup(x => x.RetrieveAsync(accountId, id))
+                .ReturnsAsync(toDoItem);
+
+            return this;
+        }
+
         public Task WhenICallGet(string accountId)
         {
             return this.RecordExceptionAsync(() => this.controller.Get(accountId));
         }
+
+        public Task WhenICallGet(string accountId, string id)
+        {
+            return this.RecordExceptionAsync(() => this.controller.Get(accountId, id));
+        }
+
 
         public ToDoItemsControllerSteps ThenTheActionResultValueShouldBe(IEnumerable<ToDoItemResponse> expected)
         {
@@ -48,6 +63,16 @@
 
             return this;
         }
+
+        public ToDoItemsControllerSteps ThenTheActionResultValueShouldBe(ToDoItemResponse expected)
+        {
+            var actionResult = this.Result as ActionResult<ToDoItemResponse>;
+            var actionResultValue = actionResult.Value;
+            actionResultValue.Should().BeEquivalentTo(expected, options => options.RespectingRuntimeTypes());
+
+            return this;
+        }
+
 
         protected override ToDoItemsControllerSteps GetStepClass()
         {
