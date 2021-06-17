@@ -13,33 +13,13 @@
     using WebApi.Models.V1;
 
     /// <summary>
-    /// This class expose CRUD operation for to-do items via Http.
+    /// Provides CRUD operation for to-do items via Http.
     /// </summary>
     [ApiController]
     [Route("api/v{version:apiVersion}")]
     [ApiVersion("1.0")]
     public class ToDoItemsController : ControllerBase
     {
-        private static readonly List<ToDoItemResponse> ToDoItems = new List<ToDoItemResponse>()
-        {
-            new ToDoItemResponse
-            {
-                Id = "1",
-                AccountId = "account_1",
-                Name = "Learn .Net 5",
-                Description = "Learn .Net 5 by creating a simple CRUD Web API",
-                IsComplete = false,
-            },
-            new ToDoItemResponse
-            {
-                Id = "2",
-                AccountId = "account_1",
-                Name = "Add Unit Test",
-                Description = "Add unit test for the Web API project",
-                IsComplete = false,
-            },
-        };
-
         private readonly IToDoService toDoService;
         private readonly IMapper mapper;
 
@@ -92,23 +72,21 @@
         /// </summary>
         /// <param name="accountId">The account id of the to-do item to be updated.</param>
         /// <param name="id">The id of the to-do item to be updated.</param>
-        /// <param name="request">The update information</param>
+        /// <param name="request">The update information.</param>
         /// <returns>An <see cref="IActionResult"/> indicating whether the operation is success.</returns>
         [HttpPut]
         [Route("accounts/{accountId}/[controller]/{id}")]
-        public IActionResult Put(string accountId, string id, ToDoItemRequest request)
+        public async Task<IActionResult> Put(string accountId, string id, ToDoItemRequest request)
         {
-            var selectedItem = ToDoItems
-                .SingleOrDefault(x => x.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+            var selectedItem = await this.toDoService.RetrieveAsync(accountId, id).ConfigureAwait(false);
 
             if (selectedItem == null)
             {
                 return this.NotFound();
             }
 
-            selectedItem.Name = request.Name;
-            selectedItem.Description = request.Description;
-            selectedItem.IsComplete = request.IsComplete;
+            var updatedItem = this.mapper.Map(request, selectedItem);
+            await this.toDoService.UpdateAsync(updatedItem).ConfigureAwait(false);
 
             return this.NoContent();
         }
@@ -122,17 +100,20 @@
         /// <returns>The updated <see cref="ToDoItemResponse"/>.</returns>
         [HttpPatch]
         [Route("accounts/{accountId}/[controller]/{id}")]
-        public IActionResult Patch(string accountId, string id, JsonPatchDocument<IUpdatableToDoItemDTO> request)
+        public async Task<IActionResult> Patch(string accountId, string id, JsonPatchDocument<IUpdatableToDoItemDTO> request)
         {
-            var selectedItem = ToDoItems
-                .SingleOrDefault(x => x.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+            var selectedItem = await this.toDoService.RetrieveAsync(accountId, id).ConfigureAwait(false);
+            var selectedItemDto = this.mapper.Map<ToDoItemResponse>(selectedItem);
 
             if (selectedItem == null)
             {
                 return this.NotFound();
             }
 
-            request.ApplyTo(selectedItem);
+            request.ApplyTo(selectedItemDto);
+            selectedItem = this.mapper.Map(selectedItemDto, selectedItem);
+
+            await this.toDoService.UpdateAsync(selectedItem).ConfigureAwait(false);
 
             return this.Ok(selectedItem);
         }
@@ -145,20 +126,13 @@
         /// <returns>The created <see cref="ToDoItemResponse"/>.</returns>
         [HttpPost]
         [Route("accounts/{accountId}/[controller]")]
-        public ActionResult<ToDoItemResponse> Post(string accountId, ToDoItemRequest request)
+        public async Task<ActionResult<ToDoItemResponse>> Post(string accountId, ToDoItemRequest request)
         {
-            var toDoItem = new ToDoItemResponse
-            {
-                Id = Guid.NewGuid().ToString(),
-                AccountId = accountId,
-                Name = request.Name,
-                Description = request.Description,
-                IsComplete = request.IsComplete,
-            };
+            var itemToCreate = this.mapper.Map<ToDoItem>(request);
+            itemToCreate.AccountId = accountId;
+            var createdItem = await this.toDoService.CreateAsync(itemToCreate).ConfigureAwait(false);
 
-            ToDoItems.Add(toDoItem);
-
-            return this.CreatedAtAction(nameof(this.Post), toDoItem);
+            return this.CreatedAtAction(nameof(this.Post), createdItem);
         }
     }
 }
