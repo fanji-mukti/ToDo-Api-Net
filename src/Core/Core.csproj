@@ -4,6 +4,10 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;SA1633</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Ensure.That" Version="10.1.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
