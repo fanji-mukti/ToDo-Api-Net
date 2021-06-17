@@ -73,6 +73,12 @@
             return this;
         }
 
+        public ToDoItemsControllerSteps ThenItShouldReturnNotFound()
+        {
+            var actionResult = this.Result as ActionResult<ToDoItemResponse>;
+            actionResult.Result.Should().BeEquivalentTo(new NotFoundResult());
+            return this;
+        }
 
         protected override ToDoItemsControllerSteps GetStepClass()
         {

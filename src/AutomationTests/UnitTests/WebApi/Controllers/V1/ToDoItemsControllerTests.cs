@@ -1,13 +1,8 @@
 ﻿namespace AutomationTests.UnitTests.WebApi.Controllers.V1
 {
-    using AutomationTests.TestDataBuilders;
-    using Core.Models;
-    using global::WebApi.Models.V1;
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-
+    using AutomationTests.TestDataBuilders;
     using Xunit;
 
     public sealed class ToDoItemsControllerTests
@@ -60,6 +55,17 @@
                 .ConfigureAwait(false);
 
             this.steps.ThenTheActionResultValueShouldBe(expected);
+        }
+
+        [Fact]
+        public async Task GetWithAccountIdAndId_ToDoItemNotFound_ReturnNotFound()
+        {
+            await this.steps
+                .GivenIHaveTheFollowingToDoItem(RequestedAccountId, RequestedToDoItemId, null)
+                .WhenICallGet(RequestedAccountId, RequestedToDoItemId)
+                .ConfigureAwait(false);
+
+            this.steps.ThenItShouldReturnNotFound();
         }
     }
 }
