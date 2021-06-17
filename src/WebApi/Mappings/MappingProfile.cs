@@ -15,6 +15,7 @@
         public MappingProfile()
         {
             this.CreateMap<ToDoItem, ToDoItemResponse>().ReverseMap();
+            this.CreateMap<ToDoItem, ToDoItemRequest>().ReverseMap();
         }
     }
 }
