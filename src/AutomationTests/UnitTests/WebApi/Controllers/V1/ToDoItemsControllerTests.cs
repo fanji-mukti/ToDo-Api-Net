@@ -1,5 +1,6 @@
 ﻿namespace AutomationTests.UnitTests.WebApi.Controllers.V1
 {
+    using AutomationTests.TestDataBuilders;
     using Core.Models;
     using global::WebApi.Models.V1;
     using System;
@@ -14,21 +15,27 @@
         private readonly ToDoItemsControllerSteps steps = new ToDoItemsControllerSteps();
 
         [Fact]
-        public async Task GetWithAccountId_ToDoItemsFound_Success()
+        public async Task GetWithAccountId_ToDoItemsFound_ReturnCollectionOfToDoItemResponses()
         {
+            var requestedAccountId = "account-1";
+
             var toDoItems = new[]
             {
-                new ToDoItem(),
+                new ToDoItemBuilder()
+                    .WithAccountId(requestedAccountId)
+                    .Build(),
+                new ToDoItemBuilder()
+                    .WithId("2")
+                    .WithAccountId(requestedAccountId)
+                    .Build(),
             };
 
-            var expected = new[]
-            {
-                new ToDoItemResponse(),
-            };
+            var expected = toDoItems
+                .Select(item => new ToDoItemResponseBuilder().FromToDoItem(item).Build());
 
             await this.steps
-                .GivenIHaveTheFollowingToDoItems(toDoItems)
-                .WhenICallGet("account")
+                .GivenIHaveTheFollowingToDoItems(requestedAccountId, toDoItems)
+                .WhenICallGet(requestedAccountId)
                 .ConfigureAwait(false);
 
             this.steps.ThenTheActionResultValueShouldBe(expected);

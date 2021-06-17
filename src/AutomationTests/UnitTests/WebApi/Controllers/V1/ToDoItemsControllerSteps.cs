@@ -26,10 +26,10 @@
             this.controller = new ToDoItemsController(this.mockService.Object, this.mapper);
         }
 
-        public ToDoItemsControllerSteps GivenIHaveTheFollowingToDoItems(IEnumerable<ToDoItem> toDoItems)
+        public ToDoItemsControllerSteps GivenIHaveTheFollowingToDoItems(string accountId, IEnumerable<ToDoItem> toDoItems)
         {
             this.mockService
-                .Setup(x => x.RetrieveAsync(It.IsAny<string>()))
+                .Setup(x => x.RetrieveAsync(accountId))
                 .ReturnsAsync(toDoItems);
 
             return this;
