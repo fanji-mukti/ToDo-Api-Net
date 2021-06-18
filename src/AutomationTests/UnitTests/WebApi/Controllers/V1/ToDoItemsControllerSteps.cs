@@ -60,6 +60,12 @@
             return this;
         }
 
+        public ToDoItemsControllerSteps GivenTheModelStateIsNotValid()
+        { 
+            this.controller.ModelState.AddModelError("any property", "Required");
+            return this;
+        }
+
         public Task WhenICallGet(string accountId)
         {
             return this.RecordExceptionAsync(() => this.controller.Get(accountId));
@@ -114,6 +120,12 @@
         public ToDoItemsControllerSteps ThenItShouldReturnNoContent()
         { 
             this.Result.Should().BeEquivalentTo(new NoContentResult());
+            return this;
+        }
+
+        public ToDoItemsControllerSteps ThenItShouldReturnBadRequest()
+        {
+            this.Result.Should().BeEquivalentTo(new BadRequestResult());
             return this;
         }
 

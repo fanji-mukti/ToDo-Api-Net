@@ -111,5 +111,21 @@
 
             this.steps.ThenItShouldReturnNotFound();
         }
+
+        [Fact]
+        public async Task Put_InvalidRequest_ReturnBadRequest()
+        {
+            var updateRequest = new ToDoItemRequestBuilder()
+                .WithName(string.Empty)
+                .Build();
+
+            await this.steps
+                .GivenTheModelStateIsNotValid()
+                .WhenICallPut(RequestedAccountId, RequestedToDoItemId, updateRequest)
+                .ConfigureAwait(false);
+
+            this.steps
+                .ThenItShouldReturnBadRequest();
+        }
     }
 }

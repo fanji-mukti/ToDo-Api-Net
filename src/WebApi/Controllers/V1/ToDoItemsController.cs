@@ -78,6 +78,11 @@
         [Route("accounts/{accountId}/[controller]/{id}")]
         public async Task<IActionResult> Put(string accountId, string id, ToDoItemRequest request)
         {
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+
             var selectedItem = await this.toDoService.RetrieveAsync(accountId, id).ConfigureAwait(false);
 
             if (selectedItem == null)
