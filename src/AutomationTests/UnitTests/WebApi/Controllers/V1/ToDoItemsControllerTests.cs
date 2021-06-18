@@ -161,5 +161,20 @@
                 .ThenTheToDoItemShouldBeUpdatedAs(expected)
                 .ThenItShouldReturnOkWithValue(expectedResponse);
         }
+
+        [Fact]
+        public async Task Patch_ToDoItemNotFound_ReturnNotFound()
+        {
+            var patchRequest = new ToDoItemPatchRequestBuilder()
+                .WithDescription("update")
+                .Build();
+
+            await this.steps
+                .GivenIHaveTheFollowingToDoItem(RequestedAccountId, RequestedToDoItemId, null)
+                .WhenICallPatch(RequestedAccountId, RequestedToDoItemId, patchRequest)
+                .ConfigureAwait(false);
+
+            this.steps.ThenItShouldReturnNotFound();
+        }
     }
 }
