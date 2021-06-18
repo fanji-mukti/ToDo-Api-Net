@@ -138,8 +138,8 @@
                 return this.BadRequest(this.ModelState);
             }
 
-            var itemToCreate = this.mapper.Map<ToDoItem>(request);
-            itemToCreate.AccountId = accountId;
+            var itemToCreate = new ToDoItem { AccountId = accountId };
+            itemToCreate = this.mapper.Map(request, itemToCreate);
             var createdItem = await this.toDoService.CreateAsync(itemToCreate).ConfigureAwait(false);
 
             return this.CreatedAtAction("Post", createdItem);
