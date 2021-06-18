@@ -98,5 +98,18 @@
                 .ThenTheToDoItemShouldBeUpdatedAs(expected)
                 .ThenItShouldReturnNoContent();
         }
+
+        [Fact]
+        public async Task Put_ToDoItemNotFound_ReturnNotFound()
+        {
+            var updateRequest = new ToDoItemRequestBuilder().Build();
+
+            await this.steps
+                .GivenIHaveTheFollowingToDoItem(RequestedAccountId, RequestedToDoItemId, null)
+                .WhenICallPut(RequestedAccountId, RequestedToDoItemId, updateRequest)
+                .ConfigureAwait(false);
+
+            this.steps.ThenItShouldReturnNotFound();
+        }
     }
 }

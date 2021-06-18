@@ -102,7 +102,12 @@
         public ToDoItemsControllerSteps ThenItShouldReturnNotFound()
         {
             var actionResult = this.Result as ActionResult<ToDoItemResponse>;
-            actionResult.Result.Should().BeEquivalentTo(new NotFoundResult());
+            if (actionResult != default)
+            {
+                actionResult.Result.Should().BeEquivalentTo(new NotFoundResult());
+            }
+
+            this.Result.Should().BeEquivalentTo(new NotFoundResult());
             return this;
         }
 
