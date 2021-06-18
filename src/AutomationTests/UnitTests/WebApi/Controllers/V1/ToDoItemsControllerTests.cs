@@ -27,7 +27,7 @@
             };
 
             var expected = toDoItems
-                .Select(item => new ToDoItemResponseBuilder().FromToDoItem(item).Build());
+                .Select(item => new ToDoItemResponseBuilder().From(item).Build());
 
             await this.steps
                 .GivenIHaveTheFollowingToDoItems(RequestedAccountId, toDoItems)
@@ -46,7 +46,7 @@
                 .Build();
 
             var expected = new ToDoItemResponseBuilder()
-                .FromToDoItem(toDoItem)
+                .From(toDoItem)
                 .Build();
 
             await this.steps
@@ -148,7 +148,7 @@
                 .Build();
 
             var expectedResponse = new ToDoItemResponseBuilder()
-                .FromToDoItem(expected)
+                .From(expected)
                 .Build();
 
             await this.steps
@@ -175,6 +175,24 @@
                 .ConfigureAwait(false);
 
             this.steps.ThenItShouldReturnNotFound();
+        }
+
+        [Fact]
+        public async Task Post_ValidRequest_ReturnCreatedAtWithCorrectResponse()
+        {
+            var createRequest = new ToDoItemRequestBuilder().Build();
+            var expected = new ToDoItemResponseBuilder()
+                .From(createRequest)
+                .WithId(null)
+                .WithAccountId(RequestedAccountId)
+                .Build();
+
+            await this.steps
+                .GivenIamAbleToCreateToDoItem()
+                .WhenIPost(RequestedAccountId, createRequest)
+                .ConfigureAwait(false);
+
+            this.steps.ThenItShouldReturnCreatedAtWithValue(expected);
         }
     }
 }

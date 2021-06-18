@@ -58,6 +58,15 @@
             return this;
         }
 
+        public ToDoItemsControllerSteps GivenIamAbleToCreateToDoItem()
+        {
+            this.mockService
+                .Setup(x => x.CreateAsync(It.IsAny<ToDoItem>()))
+                .Returns<ToDoItem>(argument => Task.FromResult(argument));
+
+            return this;
+        }
+
         public ToDoItemsControllerSteps GivenTheModelStateIsNotValid()
         { 
             this.controller.ModelState.AddModelError("any property", "Required");
@@ -84,6 +93,11 @@
             return this.RecordExceptionAsync(() => this.controller.Patch(accountId, id, request));
         }
 
+        public Task WhenIPost(string accountId, ToDoItemRequest request)
+        {
+            return this.RecordExceptionAsync(() => this.controller.Post(accountId, request));
+        }
+
         public ToDoItemsControllerSteps ThenTheToDoItemShouldBeUpdatedAs(ToDoItem expected)
         {
             this.actualUpdatedToDoItem.Should().BeEquivalentTo(expected);
@@ -104,6 +118,16 @@
             var actionResult = this.Result as ActionResult<ToDoItemResponse>;
             var okResult = actionResult.Result as OkObjectResult;
             okResult.Value.Should().BeEquivalentTo(expected, options => options.RespectingRuntimeTypes());
+
+            return this;
+        }
+
+        public ToDoItemsControllerSteps ThenItShouldReturnCreatedAtWithValue(ToDoItemResponse expected)
+        {
+            var actionResult = this.Result as ActionResult<ToDoItemResponse>;
+            var createdAtResult = actionResult.Result as CreatedAtActionResult;
+
+            createdAtResult.Value.Should().BeEquivalentTo(expected, options => options.RespectingRuntimeTypes());
 
             return this;
         }

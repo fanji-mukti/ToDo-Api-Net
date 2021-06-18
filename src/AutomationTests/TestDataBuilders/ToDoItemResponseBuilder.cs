@@ -41,13 +41,22 @@
             return this;
         }
 
-        public ToDoItemResponseBuilder FromToDoItem(ToDoItem toDoItem)
+        public ToDoItemResponseBuilder From(ToDoItem toDoItem)
         {
             this.id = toDoItem.Id;
             this.accountId = toDoItem.AccountId;
             this.name = toDoItem.Name;
             this.description = toDoItem.Description;
             this.isComplete = toDoItem.IsComplete;
+
+            return this;
+        }
+
+        public ToDoItemResponseBuilder From(ToDoItemRequest request)
+        {
+            this.name = request.Name;
+            this.description = request.Description;
+            this.isComplete = request.IsComplete;
 
             return this;
         }
