@@ -1,8 +1,6 @@
 ﻿namespace AutomationTests.UnitTests.WebApi.Controllers.V1
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
     using Core.Models;
@@ -11,9 +9,9 @@
     using global::WebApi.Controllers.V1;
     using global::WebApi.Mappings;
     using global::WebApi.Models.V1;
+    using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
     using Moq;
-    using Xunit;
 
     internal sealed class ToDoItemsControllerSteps : BaseTestSteps<ToDoItemsControllerSteps>
     {
@@ -81,26 +79,31 @@
             return this.RecordExceptionAsync(() => this.controller.Put(accountId, id, request));
         }
 
+        public Task WhenICallPatch(string accountId, string id, JsonPatchDocument<IUpdatableToDoItemDTO> request)
+        {
+            return this.RecordExceptionAsync(() => this.controller.Patch(accountId, id, request));
+        }
+
         public ToDoItemsControllerSteps ThenTheToDoItemShouldBeUpdatedAs(ToDoItem expected)
         {
             this.actualUpdatedToDoItem.Should().BeEquivalentTo(expected);
             return this;
         }
 
-        public ToDoItemsControllerSteps ThenTheActionResultValueShouldBe(IEnumerable<ToDoItemResponse> expected)
+        public ToDoItemsControllerSteps ThenItShouldReturnOkWithValue(IEnumerable<ToDoItemResponse> expected)
         {
             var actionResult = this.Result as ActionResult<IEnumerable<ToDoItemResponse>>;
-            var actionResultValue = actionResult.Value;
-            actionResultValue.Should().BeEquivalentTo(expected, options => options.RespectingRuntimeTypes());
+            var okResult = actionResult.Result as OkObjectResult;
+            okResult.Value.Should().BeEquivalentTo(expected, options => options.RespectingRuntimeTypes());
 
             return this;
         }
 
-        public ToDoItemsControllerSteps ThenTheActionResultValueShouldBe(ToDoItemResponse expected)
+        public ToDoItemsControllerSteps ThenItShouldReturnOkWithValue(ToDoItemResponse expected)
         {
             var actionResult = this.Result as ActionResult<ToDoItemResponse>;
-            var actionResultValue = actionResult.Value;
-            actionResultValue.Should().BeEquivalentTo(expected, options => options.RespectingRuntimeTypes());
+            var okResult = actionResult.Result as OkObjectResult;
+            okResult.Value.Should().BeEquivalentTo(expected, options => options.RespectingRuntimeTypes());
 
             return this;
         }
@@ -112,8 +115,11 @@
             {
                 actionResult.Result.Should().BeEquivalentTo(new NotFoundResult());
             }
+            else
+            {
+                this.Result.Should().BeEquivalentTo(new NotFoundResult());
+            }
 
-            this.Result.Should().BeEquivalentTo(new NotFoundResult());
             return this;
         }
 

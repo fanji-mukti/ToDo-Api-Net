@@ -34,7 +34,7 @@
                 .WhenICallGet(RequestedAccountId)
                 .ConfigureAwait(false);
 
-            this.steps.ThenTheActionResultValueShouldBe(expected);
+            this.steps.ThenItShouldReturnOkWithValue(expected);
         }
 
         [Fact]
@@ -54,7 +54,7 @@
                 .WhenICallGet(RequestedAccountId, RequestedToDoItemId)
                 .ConfigureAwait(false);
 
-            this.steps.ThenTheActionResultValueShouldBe(expected);
+            this.steps.ThenItShouldReturnOkWithValue(expected);
         }
 
         [Fact]
@@ -126,6 +126,40 @@
 
             this.steps
                 .ThenItShouldReturnBadRequest();
+        }
+
+        [Fact]
+        public async Task Patch_ValidRequest_ReturnOk()
+        {
+            var existingToDoItem = new ToDoItemBuilder()
+                .WithId(RequestedToDoItemId)
+                .WithAccountId(RequestedAccountId)
+                .Build();
+
+            var patchedDescription = "patched description";
+            var patchRequest = new ToDoItemPatchRequestBuilder()
+                .WithDescription(patchedDescription)
+                .Build();
+
+            var expected = new ToDoItemBuilder()
+                .WithId(RequestedToDoItemId)
+                .WithAccountId(RequestedAccountId)
+                .WithDescription(patchedDescription)
+                .Build();
+
+            var expectedResponse = new ToDoItemResponseBuilder()
+                .FromToDoItem(expected)
+                .Build();
+
+            await this.steps
+                .GivenIHaveTheFollowingToDoItem(RequestedAccountId, RequestedToDoItemId, existingToDoItem)
+                .GivenIamAbleToUpdateToDoItem()
+                .WhenICallPatch(RequestedAccountId, RequestedToDoItemId, patchRequest)
+                .ConfigureAwait(false);
+
+            this.steps
+                .ThenTheToDoItemShouldBeUpdatedAs(expected)
+                .ThenItShouldReturnOkWithValue(expectedResponse);
         }
     }
 }
