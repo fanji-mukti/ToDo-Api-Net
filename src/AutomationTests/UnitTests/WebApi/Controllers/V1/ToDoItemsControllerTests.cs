@@ -31,7 +31,7 @@
 
             await this.steps
                 .GivenIHaveTheFollowingToDoItems(RequestedAccountId, toDoItems)
-                .WhenICallGet(RequestedAccountId)
+                .WhenIGet(RequestedAccountId)
                 .ConfigureAwait(false);
 
             this.steps.ThenItShouldReturnOkWithValue(expected);
@@ -51,7 +51,7 @@
 
             await this.steps
                 .GivenIHaveTheFollowingToDoItem(RequestedAccountId, RequestedToDoItemId, toDoItem)
-                .WhenICallGet(RequestedAccountId, RequestedToDoItemId)
+                .WhenIGet(RequestedAccountId, RequestedToDoItemId)
                 .ConfigureAwait(false);
 
             this.steps.ThenItShouldReturnOkWithValue(expected);
@@ -62,7 +62,7 @@
         {
             await this.steps
                 .GivenIHaveTheFollowingToDoItem(RequestedAccountId, RequestedToDoItemId, null)
-                .WhenICallGet(RequestedAccountId, RequestedToDoItemId)
+                .WhenIGet(RequestedAccountId, RequestedToDoItemId)
                 .ConfigureAwait(false);
 
             this.steps.ThenItShouldReturnNotFound();
@@ -91,7 +91,7 @@
             await this.steps
                 .GivenIHaveTheFollowingToDoItem(RequestedAccountId, RequestedToDoItemId, existingToDoItem)
                 .GivenIamAbleToUpdateToDoItem()
-                .WhenICallPut(RequestedAccountId, RequestedToDoItemId, updateRequest)
+                .WhenIPut(RequestedAccountId, RequestedToDoItemId, updateRequest)
                 .ConfigureAwait(false);
 
             this.steps
@@ -106,7 +106,7 @@
 
             await this.steps
                 .GivenIHaveTheFollowingToDoItem(RequestedAccountId, RequestedToDoItemId, null)
-                .WhenICallPut(RequestedAccountId, RequestedToDoItemId, updateRequest)
+                .WhenIPut(RequestedAccountId, RequestedToDoItemId, updateRequest)
                 .ConfigureAwait(false);
 
             this.steps.ThenItShouldReturnNotFound();
@@ -121,7 +121,7 @@
 
             await this.steps
                 .GivenTheModelStateIsNotValid()
-                .WhenICallPut(RequestedAccountId, RequestedToDoItemId, updateRequest)
+                .WhenIPut(RequestedAccountId, RequestedToDoItemId, updateRequest)
                 .ConfigureAwait(false);
 
             this.steps
@@ -154,7 +154,7 @@
             await this.steps
                 .GivenIHaveTheFollowingToDoItem(RequestedAccountId, RequestedToDoItemId, existingToDoItem)
                 .GivenIamAbleToUpdateToDoItem()
-                .WhenICallPatch(RequestedAccountId, RequestedToDoItemId, patchRequest)
+                .WhenIPatch(RequestedAccountId, RequestedToDoItemId, patchRequest)
                 .ConfigureAwait(false);
 
             this.steps
@@ -171,7 +171,7 @@
 
             await this.steps
                 .GivenIHaveTheFollowingToDoItem(RequestedAccountId, RequestedToDoItemId, null)
-                .WhenICallPatch(RequestedAccountId, RequestedToDoItemId, patchRequest)
+                .WhenIPatch(RequestedAccountId, RequestedToDoItemId, patchRequest)
                 .ConfigureAwait(false);
 
             this.steps.ThenItShouldReturnNotFound();

@@ -64,22 +64,22 @@
             return this;
         }
 
-        public Task WhenICallGet(string accountId)
+        public Task WhenIGet(string accountId)
         {
             return this.RecordExceptionAsync(() => this.controller.Get(accountId));
         }
 
-        public Task WhenICallGet(string accountId, string id)
+        public Task WhenIGet(string accountId, string id)
         {
             return this.RecordExceptionAsync(() => this.controller.Get(accountId, id));
         }
 
-        public Task WhenICallPut(string accountId, string id, ToDoItemRequest request)
+        public Task WhenIPut(string accountId, string id, ToDoItemRequest request)
         {
             return this.RecordExceptionAsync(() => this.controller.Put(accountId, id, request));
         }
 
-        public Task WhenICallPatch(string accountId, string id, JsonPatchDocument<IUpdatableToDoItemDTO> request)
+        public Task WhenIPatch(string accountId, string id, JsonPatchDocument<IUpdatableToDoItemDTO> request)
         {
             return this.RecordExceptionAsync(() => this.controller.Patch(accountId, id, request));
         }
