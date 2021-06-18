@@ -133,6 +133,11 @@
         [Route("accounts/{accountId}/[controller]")]
         public async Task<ActionResult<ToDoItemResponse>> Post(string accountId, ToDoItemRequest request)
         {
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+
             var itemToCreate = this.mapper.Map<ToDoItem>(request);
             itemToCreate.AccountId = accountId;
             var createdItem = await this.toDoService.CreateAsync(itemToCreate).ConfigureAwait(false);
