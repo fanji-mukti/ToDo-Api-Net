@@ -44,7 +44,7 @@
         public async Task<ActionResult<IEnumerable<ToDoItemResponse>>> Get(string accountId)
         {
             var toDoItems = await this.toDoService.RetrieveAsync(accountId).ConfigureAwait(false);
-            return this.mapper.Map<IEnumerable<ToDoItem>, List<ToDoItemResponse>>(toDoItems);
+            return this.Ok(this.mapper.Map<IEnumerable<ToDoItem>, List<ToDoItemResponse>>(toDoItems));
         }
 
         /// <summary>
@@ -64,7 +64,7 @@
                 return this.NotFound();
             }
 
-            return this.mapper.Map<ToDoItemResponse>(toDoItem);
+            return this.Ok(this.mapper.Map<ToDoItemResponse>(toDoItem));
         }
 
         /// <summary>
@@ -105,7 +105,7 @@
         /// <returns>The updated <see cref="ToDoItemResponse"/>.</returns>
         [HttpPatch]
         [Route("accounts/{accountId}/[controller]/{id}")]
-        public async Task<IActionResult> Patch(string accountId, string id, JsonPatchDocument<IUpdatableToDoItemDTO> request)
+        public async Task<ActionResult<ToDoItemResponse>> Patch(string accountId, string id, JsonPatchDocument<IUpdatableToDoItemDTO> request)
         {
             var selectedItem = await this.toDoService.RetrieveAsync(accountId, id).ConfigureAwait(false);
             var selectedItemDto = this.mapper.Map<ToDoItemResponse>(selectedItem);
