@@ -155,7 +155,16 @@
 
         public ToDoItemsControllerSteps ThenItShouldReturnBadRequest()
         {
-            this.Result.Should().BeEquivalentTo(new BadRequestResult());
+            var actionResult = this.Result as ActionResult<ToDoItemResponse>;
+            if (actionResult != default)
+            {
+                actionResult.Result.Should().BeEquivalentTo(new BadRequestResult());
+            }
+            else
+            {
+                this.Result.Should().BeEquivalentTo(new BadRequestResult());
+            }
+
             return this;
         }
 

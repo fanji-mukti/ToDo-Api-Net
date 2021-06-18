@@ -194,5 +194,18 @@
 
             this.steps.ThenItShouldReturnCreatedAtWithValue(expected);
         }
+
+        [Fact]
+        public async Task Post_InvalidRequest_ReturnBadRequest()
+        {
+            var createRequest = new ToDoItemRequestBuilder().Build();
+
+            await this.steps
+                .GivenTheModelStateIsNotValid()
+                .WhenIPost(RequestedAccountId, createRequest)
+                .ConfigureAwait(false);
+
+            this.steps.ThenItShouldReturnBadRequest();
+        }
     }
 }
