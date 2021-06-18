@@ -75,27 +75,27 @@
 
         public Task WhenIGet(string accountId)
         {
-            return this.RecordExceptionAsync(() => this.controller.Get(accountId));
+            return this.RecordExceptionAsync(() => this.controller.GetAsync(accountId));
         }
 
         public Task WhenIGet(string accountId, string id)
         {
-            return this.RecordExceptionAsync(() => this.controller.Get(accountId, id));
+            return this.RecordExceptionAsync(() => this.controller.GetAsync(accountId, id));
         }
 
         public Task WhenIPut(string accountId, string id, ToDoItemRequest request)
         {
-            return this.RecordExceptionAsync(() => this.controller.Put(accountId, id, request));
+            return this.RecordExceptionAsync(() => this.controller.PutAsync(accountId, id, request));
         }
 
         public Task WhenIPatch(string accountId, string id, JsonPatchDocument<IUpdatableToDoItemDTO> request)
         {
-            return this.RecordExceptionAsync(() => this.controller.Patch(accountId, id, request));
+            return this.RecordExceptionAsync(() => this.controller.PatchAsync(accountId, id, request));
         }
 
         public Task WhenIPost(string accountId, ToDoItemRequest request)
         {
-            return this.RecordExceptionAsync(() => this.controller.Post(accountId, request));
+            return this.RecordExceptionAsync(() => this.controller.PostAsync(accountId, request));
         }
 
         public ToDoItemsControllerSteps ThenTheToDoItemShouldBeUpdatedAs(ToDoItem expected)

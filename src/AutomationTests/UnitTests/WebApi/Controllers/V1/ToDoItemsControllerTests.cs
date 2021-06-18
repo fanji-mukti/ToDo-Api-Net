@@ -13,7 +13,7 @@
         private readonly ToDoItemsControllerSteps steps = new ToDoItemsControllerSteps();
 
         [Fact]
-        public async Task GetWithAccountId_ToDoItemsFound_ReturnCollectionOfToDoItemResponses()
+        public async Task GetAsyncWithAccountId_ToDoItemsFound_ReturnCollectionOfToDoItemResponses()
         {
             var toDoItems = new[]
             {
@@ -38,7 +38,7 @@
         }
 
         [Fact]
-        public async Task GetWithAccountIdAndId_ToDoItemFound_ReturnToDoItemResponse()
+        public async Task GetAsyncWithAccountIdAndId_ToDoItemFound_ReturnToDoItemResponse()
         {
             var toDoItem = new ToDoItemBuilder()
                 .WithId(RequestedToDoItemId)
@@ -58,7 +58,7 @@
         }
 
         [Fact]
-        public async Task GetWithAccountIdAndId_ToDoItemNotFound_ReturnNotFound()
+        public async Task GetAsyncWithAccountIdAndId_ToDoItemNotFound_ReturnNotFound()
         {
             await this.steps
                 .GivenIHaveTheFollowingToDoItem(RequestedAccountId, RequestedToDoItemId, null)
@@ -69,7 +69,7 @@
         }
     
         [Fact]
-        public async Task Put_ValidRequest_ReturnNoContent()
+        public async Task PutAsync_ValidRequest_ReturnNoContent()
         {
             var existingToDoItem = new ToDoItemBuilder()
                 .WithId(RequestedToDoItemId)
@@ -100,7 +100,7 @@
         }
 
         [Fact]
-        public async Task Put_ToDoItemNotFound_ReturnNotFound()
+        public async Task PutAsync_ToDoItemNotFound_ReturnNotFound()
         {
             var updateRequest = new ToDoItemRequestBuilder().Build();
 
@@ -113,7 +113,7 @@
         }
 
         [Fact]
-        public async Task Put_InvalidRequest_ReturnBadRequest()
+        public async Task PutAsync_InvalidRequest_ReturnBadRequest()
         {
             var updateRequest = new ToDoItemRequestBuilder()
                 .WithName(string.Empty)
@@ -129,7 +129,7 @@
         }
 
         [Fact]
-        public async Task Patch_ValidRequest_ReturnOk()
+        public async Task PatchAsync_ValidRequest_ReturnOk()
         {
             var existingToDoItem = new ToDoItemBuilder()
                 .WithId(RequestedToDoItemId)
@@ -163,7 +163,7 @@
         }
 
         [Fact]
-        public async Task Patch_ToDoItemNotFound_ReturnNotFound()
+        public async Task PatchAsync_ToDoItemNotFound_ReturnNotFound()
         {
             var patchRequest = new ToDoItemPatchRequestBuilder()
                 .WithDescription("update")
@@ -178,7 +178,7 @@
         }
 
         [Fact]
-        public async Task Post_ValidRequest_ReturnCreatedAtWithCorrectResponse()
+        public async Task PostAsync_ValidRequest_ReturnCreatedAtWithCorrectResponse()
         {
             var createRequest = new ToDoItemRequestBuilder().Build();
             var expected = new ToDoItemResponseBuilder()
@@ -196,7 +196,7 @@
         }
 
         [Fact]
-        public async Task Post_InvalidRequest_ReturnBadRequest()
+        public async Task PostAsync_InvalidRequest_ReturnBadRequest()
         {
             var createRequest = new ToDoItemRequestBuilder().Build();
 

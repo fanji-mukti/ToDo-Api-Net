@@ -41,7 +41,7 @@
         /// <returns>A collection of <see cref="ToDoItemResponse"/>.</returns>
         [HttpGet]
         [Route("accounts/{accountId}/[controller]")]
-        public async Task<ActionResult<IEnumerable<ToDoItemResponse>>> Get(string accountId)
+        public async Task<ActionResult<IEnumerable<ToDoItemResponse>>> GetAsync(string accountId)
         {
             var toDoItems = await this.toDoService.RetrieveAsync(accountId).ConfigureAwait(false);
             return this.Ok(this.mapper.Map<IEnumerable<ToDoItem>, List<ToDoItemResponse>>(toDoItems));
@@ -55,7 +55,7 @@
         /// <returns>The <see cref="ToDoItemResponse"/>.</returns>
         [HttpGet]
         [Route("accounts/{accountId}/[controller]/{id}")]
-        public async Task<ActionResult<ToDoItemResponse>> Get(string accountId, string id)
+        public async Task<ActionResult<ToDoItemResponse>> GetAsync(string accountId, string id)
         {
             var toDoItem = await this.toDoService.RetrieveAsync(accountId, id).ConfigureAwait(false);
 
@@ -76,7 +76,7 @@
         /// <returns>An <see cref="IActionResult"/> indicating whether the operation is success.</returns>
         [HttpPut]
         [Route("accounts/{accountId}/[controller]/{id}")]
-        public async Task<IActionResult> Put(string accountId, string id, ToDoItemRequest request)
+        public async Task<IActionResult> PutAsync(string accountId, string id, ToDoItemRequest request)
         {
             if (!this.ModelState.IsValid)
             {
@@ -105,7 +105,7 @@
         /// <returns>The updated <see cref="ToDoItemResponse"/>.</returns>
         [HttpPatch]
         [Route("accounts/{accountId}/[controller]/{id}")]
-        public async Task<ActionResult<ToDoItemResponse>> Patch(string accountId, string id, JsonPatchDocument<IUpdatableToDoItemDTO> request)
+        public async Task<ActionResult<ToDoItemResponse>> PatchAsync(string accountId, string id, JsonPatchDocument<IUpdatableToDoItemDTO> request)
         {
             var selectedItem = await this.toDoService.RetrieveAsync(accountId, id).ConfigureAwait(false);
             var selectedItemDto = this.mapper.Map<ToDoItemResponse>(selectedItem);
@@ -131,7 +131,7 @@
         /// <returns>The created <see cref="ToDoItemResponse"/>.</returns>
         [HttpPost]
         [Route("accounts/{accountId}/[controller]")]
-        public async Task<ActionResult<ToDoItemResponse>> Post(string accountId, ToDoItemRequest request)
+        public async Task<ActionResult<ToDoItemResponse>> PostAsync(string accountId, ToDoItemRequest request)
         {
             if (!this.ModelState.IsValid)
             {
@@ -142,7 +142,7 @@
             itemToCreate.AccountId = accountId;
             var createdItem = await this.toDoService.CreateAsync(itemToCreate).ConfigureAwait(false);
 
-            return this.CreatedAtAction(nameof(this.Post), createdItem);
+            return this.CreatedAtAction("Post", createdItem);
         }
     }
 }
