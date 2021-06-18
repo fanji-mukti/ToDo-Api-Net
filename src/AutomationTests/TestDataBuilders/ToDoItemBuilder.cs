@@ -1,7 +1,8 @@
-﻿using Core.Models;
-
-namespace AutomationTests.TestDataBuilders
+﻿namespace AutomationTests.TestDataBuilders
 {
+    using Core.Models;
+    using WebApi.Models.V1;
+
     internal sealed class ToDoItemBuilder
     {
         private string id = "todo-1";
@@ -37,6 +38,14 @@ namespace AutomationTests.TestDataBuilders
         public ToDoItemBuilder WithIsComplete(bool isComplete)
         {
             this.isComplete = isComplete;
+            return this;
+        }
+
+        public ToDoItemBuilder From(ToDoItemRequest request)
+        {
+            this.name = request.Name;
+            this.description = request.Description;
+            this.isComplete = request.IsComplete;
             return this;
         }
 
