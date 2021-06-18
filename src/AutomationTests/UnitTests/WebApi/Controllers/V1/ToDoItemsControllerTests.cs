@@ -67,5 +67,36 @@
 
             this.steps.ThenItShouldReturnNotFound();
         }
+    
+        [Fact]
+        public async Task Put_ValidRequest_ReturnNoContent()
+        {
+            var existingToDoItem = new ToDoItemBuilder()
+                .WithId(RequestedToDoItemId)
+                .WithAccountId(RequestedAccountId)
+                .Build();
+
+            var updateRequest = new ToDoItemRequestBuilder()
+                .WithName("updated name")
+                .WithDescription("updated description")
+                .WithIsComplete(false)
+                .Build();
+
+            var expected = new ToDoItemBuilder()
+                .From(updateRequest)
+                .WithId(RequestedToDoItemId)
+                .WithAccountId(RequestedAccountId)
+                .Build();
+
+            await this.steps
+                .GivenIHaveTheFollowingToDoItem(RequestedAccountId, RequestedToDoItemId, existingToDoItem)
+                .GivenIamAbleToUpdateToDoItem()
+                .WhenICallPut(RequestedAccountId, RequestedToDoItemId, updateRequest)
+                .ConfigureAwait(false);
+
+            this.steps
+                .ThenTheToDoItemShouldBeUpdatedAs(expected)
+                .ThenItShouldReturnNoContent();
+        }
     }
 }

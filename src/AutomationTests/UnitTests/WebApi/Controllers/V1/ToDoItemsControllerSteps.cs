@@ -17,9 +17,11 @@
 
     internal sealed class ToDoItemsControllerSteps : BaseTestSteps<ToDoItemsControllerSteps>
     {
-        private readonly Mock<IToDoService> mockService = new Mock<IToDoService>();
+        private readonly Mock<IToDoService> mockService = new();
         private readonly IMapper mapper = AutoMapperConfig.Initialize();
         private readonly ToDoItemsController controller;
+
+        private ToDoItem actualUpdatedToDoItem;
 
         public ToDoItemsControllerSteps()
         {
@@ -44,6 +46,20 @@
             return this;
         }
 
+        public ToDoItemsControllerSteps GivenIamAbleToUpdateToDoItem()
+        {
+            this.mockService
+                .Setup(x => x.UpdateAsync(It.IsAny<ToDoItem>()))
+                .Callback<ToDoItem>(
+                    updatedItem =>
+                    {
+                        this.actualUpdatedToDoItem = updatedItem;
+                    })
+                .Returns(Task.CompletedTask);
+
+            return this;
+        }
+
         public Task WhenICallGet(string accountId)
         {
             return this.RecordExceptionAsync(() => this.controller.Get(accountId));
@@ -54,6 +70,16 @@
             return this.RecordExceptionAsync(() => this.controller.Get(accountId, id));
         }
 
+        public Task WhenICallPut(string accountId, string id, ToDoItemRequest request)
+        {
+            return this.RecordExceptionAsync(() => this.controller.Put(accountId, id, request));
+        }
+
+        public ToDoItemsControllerSteps ThenTheToDoItemShouldBeUpdatedAs(ToDoItem expected)
+        {
+            this.actualUpdatedToDoItem.Should().BeEquivalentTo(expected);
+            return this;
+        }
 
         public ToDoItemsControllerSteps ThenTheActionResultValueShouldBe(IEnumerable<ToDoItemResponse> expected)
         {
@@ -77,6 +103,12 @@
         {
             var actionResult = this.Result as ActionResult<ToDoItemResponse>;
             actionResult.Result.Should().BeEquivalentTo(new NotFoundResult());
+            return this;
+        }
+
+        public ToDoItemsControllerSteps ThenItShouldReturnNoContent()
+        { 
+            this.Result.Should().BeEquivalentTo(new NoContentResult());
             return this;
         }
 
