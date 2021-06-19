@@ -51,9 +51,14 @@
 
         public Task WhenIPostAsync(string requestUri, ToDoItemRequest request)
         {
-            var jsonBody = JsonConvert.SerializeObject(request);
-            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            var content = CreateStringContent(request);
             return this.RecordExceptionAsync(() => this.client.PostAsync(requestUri, content));
+        }
+
+        public Task WhenIPutAsync(string requestUri, ToDoItemRequest request)
+        {
+            var content = CreateStringContent(request);
+            return this.RecordExceptionAsync(() => this.client.PutAsync(requestUri, content));
         }
 
         public WebApiSteps ThenTheResponseStatusCodeShouldBe(HttpStatusCode expected)
@@ -84,6 +89,12 @@
         {
             var stringContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonConvert.DeserializeObject<T>(stringContent);
+        }
+
+        private static StringContent CreateStringContent<T>(T value)
+        {
+            var jsonBody = JsonConvert.SerializeObject(value);
+            return new StringContent(jsonBody, Encoding.UTF8, "application/json");
         }
     }
 }

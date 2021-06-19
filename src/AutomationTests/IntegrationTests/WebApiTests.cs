@@ -96,5 +96,38 @@
                 .ThenTheResponseStatusCodeShouldBe(HttpStatusCode.Created)
                 .ThenTheResponseBodyShouldBe(expected, exclude => exclude.Id);
         }
+
+        [Fact]
+        public async Task PutAsync_ReturnNoContent()
+        {
+            var accountId = "webapitest-put";
+
+            var entity = new ToDoItemEntityBuilder()
+                .WithRowKey($"{accountId}-1")
+                .WithPartitionKey(accountId)
+                .Build();
+
+            var updateRequest = new ToDoItemRequestBuilder()
+                .WithName("Updated name")
+                .WithDescription("Updated description")
+                .WithIsComplete(false)
+                .Build();
+
+            var requestUri = String.Format(GetByAccountAndIdUriFormat, accountId, entity.RowKey);
+
+            var expected = new ToDoItemResponseBuilder()
+                .From(updateRequest)
+                .WithId(entity.RowKey)
+                .WithAccountId(entity.PartitionKey)
+                .Build();
+
+            await this.steps.GivenIHaveTheFollowingEntities(entity).ConfigureAwait(false);
+            await this.steps.WhenIPutAsync(requestUri, updateRequest).ConfigureAwait(false);
+
+            this.steps.ThenTheResponseStatusCodeShouldBe(HttpStatusCode.NoContent);
+
+            await this.steps.WhenIGetAsync(requestUri).ConfigureAwait(false);
+            await this.steps.ThenTheResponseBodyShouldBe(expected).ConfigureAwait(false);
+        }
     }
 }
