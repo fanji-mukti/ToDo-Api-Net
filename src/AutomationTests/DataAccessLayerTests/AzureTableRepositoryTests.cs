@@ -41,6 +41,15 @@
             this.steps.ThenTheResultShouldBe(expected);
         }
 
+        [Fact]
+        public async Task GetAsync_EntityNotFound_ReturnNull()
+        {
+            await this.steps.WhenIGetAsync("notExists", "notExists").ConfigureAwait(false);
+            this.steps
+                .ThenNoExceptionShouldBeThrown()
+                .ThenTheResultShouldBe((ToDoItem)null);
+        }
+
         public void Dispose()
         {
             if (this.disposed)

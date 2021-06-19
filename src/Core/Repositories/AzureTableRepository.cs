@@ -93,7 +93,9 @@
                 var retrieveOperation = TableOperation.Retrieve<TEntity>(partitionKey, id);
                 var operationResult = await this.table.ExecuteAsync(retrieveOperation).ConfigureAwait(false);
 
-                return this.mapper.Map<T>(operationResult.Result);
+                return operationResult.Result == null ?
+                    null :
+                    this.mapper.Map<T>(operationResult.Result);
             }
         }
 
