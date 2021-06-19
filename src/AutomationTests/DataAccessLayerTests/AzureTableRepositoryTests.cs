@@ -81,5 +81,18 @@
             await this.steps.WhenIGetAsync("notExists").ConfigureAwait(false);
             this.steps.ThenTheResultShouldBe(Array.Empty<ToDoItem>());
         }
+
+        [Fact]
+        public async Task AddAsync_ValidParameter_ToDoItemAddedSuccessfully()
+        {
+            var toDoItem = new ToDoItemBuilder()
+                .WithId("Add Test")
+                .WithAccountId("Add Test account")
+                .Build();
+
+            await this.steps.WhenIAddAsync(toDoItem).ConfigureAwait(false);
+            await this.steps.WhenIGetAsync(toDoItem.AccountId, toDoItem.Id).ConfigureAwait(false);
+            this.steps.ThenTheResultShouldBe(toDoItem);
+        }
     }
 }

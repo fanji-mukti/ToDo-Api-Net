@@ -46,6 +46,11 @@
             return this.RecordExceptionAsync(() => this.repository.GetAsync(accountId));
         }
 
+        public Task WhenIAddAsync(ToDoItem toDoItem)
+        {
+            return this.RecordExceptionAsync(() => this.repository.AddAsync(toDoItem));
+        }
+
         protected override AzureTableRepositorySteps GetStepClass()
         {
             return this;
