@@ -1,30 +1,33 @@
 ﻿namespace Core.Models
 {
+    /// <summary>
+    /// Represents the to-do item.
+    /// </summary>
     public sealed class ToDoItem
     {
         /// <summary>
-        /// Get the to-do item id.
+        /// Gets the to-do item id.
         /// </summary>
-        public string Id { get; set; }
+        public string Id { get; init; }
 
         /// <summary>
-        /// Get the account Id that associate with the to-do item.
+        /// Gets the account Id that associate with the to-do item.
         /// </summary>
-        public string AccountId { get; set; }
+        public string AccountId { get; init; }
 
         /// <summary>
-        /// Get the name of the to-do item.
+        /// Gets the name of the to-do item.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; init; }
 
         /// <summary>
-        /// Get the description of the to-do item.
+        /// Gets the description of the to-do item.
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; init; }
 
         /// <summary>
-        /// Get the value indicating whether the to-do item is complete.
+        /// Gets a value indicating whether the to-do item is complete.
         /// </summary>
-        public bool IsComplete { get; set; }
+        public bool IsComplete { get; init; }
     }
 }

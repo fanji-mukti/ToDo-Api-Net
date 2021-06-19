@@ -1,5 +1,7 @@
 ﻿namespace WebApi.Models.V1
 {
+    using System.ComponentModel.DataAnnotations;
+
     /// <summary>
     /// Represents to-do item request.
     /// </summary>
@@ -8,6 +10,7 @@
         /// <summary>
         /// Gets the name of the to-do item.
         /// </summary>
+        [Required]
         public string Name { get; init; }
 
         /// <summary>
