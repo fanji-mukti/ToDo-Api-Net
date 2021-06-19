@@ -3,8 +3,8 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMapper;
-    using Core.Models;
-    using Core.Services;
+    using global::Core.Models;
+    using global::Core.Services;
     using FluentAssertions;
     using global::WebApi.Controllers.V1;
     using global::WebApi.Mappings;
