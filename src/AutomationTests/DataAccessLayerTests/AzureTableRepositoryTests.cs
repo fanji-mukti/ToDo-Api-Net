@@ -1,5 +1,6 @@
 ﻿namespace AutomationTests.DataAccessLayerTests
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using AutomationTests.TestDataBuilders;
@@ -72,6 +73,13 @@
             await this.steps.GivenIHaveTheFollowingEntities(entities).ConfigureAwait(false);
             await this.steps.WhenIGetAsync(accountId).ConfigureAwait(false);
             this.steps.ThenTheResultShouldBe(expected);
+        }
+        
+        [Fact]
+        public async Task GetAsyncWithAccountId_EntityNotFound_ReturnEmptyCollection()
+        {
+            await this.steps.WhenIGetAsync("notExists").ConfigureAwait(false);
+            this.steps.ThenTheResultShouldBe(Array.Empty<ToDoItem>());
         }
     }
 }
