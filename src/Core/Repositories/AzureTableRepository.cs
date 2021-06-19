@@ -91,9 +91,9 @@
             async Task<T> RetrieveAsync()
             {
                 var retrieveOperation = TableOperation.Retrieve<TEntity>(partitionKey, id);
-                var entity = await this.table.ExecuteAsync(retrieveOperation).ConfigureAwait(false);
+                var operationResult = await this.table.ExecuteAsync(retrieveOperation).ConfigureAwait(false);
 
-                return this.mapper.Map<T>(entity);
+                return this.mapper.Map<T>(operationResult.Result);
             }
         }
 
@@ -107,6 +107,7 @@
             async Task UpdateAsync()
             {
                 var entity = this.mapper.Map<TEntity>(itemToUpdate);
+                entity.ETag = "*";
                 var updateOperation = TableOperation.Replace(entity);
 
                 await this.table.ExecuteAsync(updateOperation).ConfigureAwait(false);
