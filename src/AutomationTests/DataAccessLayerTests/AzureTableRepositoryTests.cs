@@ -2,6 +2,7 @@
 {
     using System;
     using System.Threading.Tasks;
+    using AutomationTests.TestDataBuilders;
     using AutomationTests.TestHelpers;
     using Core.Models;
     using Core.Repositories.Entities;
@@ -10,6 +11,9 @@
     [Collection(nameof(StorageEmulatorCollectionFixture))]
     public sealed class AzureTableRepositoryTests : IDisposable
     {
+        private const string RequestedAccountId = "account-1";
+        private const string RequestedToDoItemId = "todo-itemid-1";
+
         private readonly AzureTableRepositorySteps steps;
 
         private bool disposed;
@@ -22,17 +26,19 @@
         [Fact]
         public async Task GetAsync_EntityFound_ReturnToDoItem()
         {
-            var entity = new ToDoItemEntity("account_1", "id-1")
-            {
-                Name = "asd",
-                Description = "asd",
-                IsComplete = true,
-            };
+            var entity = new ToDoItemEntityBuilder()
+                .WithRowKey(RequestedToDoItemId)
+                .WithPartitionKey(RequestedAccountId)
+                .Build();
+
+            var expected = new ToDoItemBuilder()
+                .From(entity)
+                .Build();
 
             await this.steps.GivenIHaveTheFollowingEntities(entity).ConfigureAwait(false);
-            await this.steps.WhenIGetAsync("account_1", "id-1").ConfigureAwait(false);
+            await this.steps.WhenIGetAsync(RequestedAccountId, RequestedToDoItemId).ConfigureAwait(false);
 
-            this.steps.ThenTheResultShouldBe(new ToDoItem());
+            this.steps.ThenTheResultShouldBe(expected);
         }
 
         public void Dispose()
