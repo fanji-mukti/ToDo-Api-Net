@@ -13,6 +13,8 @@
     public sealed class WebApiTests : IClassFixture<WebApplicationFactory<WebApi.Startup>>
     {
         private const string GetByAccountUriFormat = "api/v1.0/accounts/{0}/ToDoItems";
+        private const string GetByAccountAndIdUriFormat = "api/v1.0/accounts/{0}/ToDoItems/{1}";
+
         private readonly WebApiSteps steps;
 
         public WebApiTests(AzureStorageEmulator azureStorageEmulator, WebApplicationFactory<WebApi.Startup> factory)
@@ -49,6 +51,30 @@
                 .ThenTheResponseStatusCodeShouldBe(HttpStatusCode.OK)
                 .ThenTheResponseBodyShouldBe(expected)
                 .ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task GetByAccountAndId_ReturnOk()
+        {
+            var accountId = "webapitest-getByAccountAndId";
+
+            var entity = new ToDoItemEntityBuilder()
+                .WithRowKey($"{accountId}-1")
+                .WithPartitionKey(accountId)
+                .Build();
+
+            var expected = new ToDoItemResponseBuilder()
+                .From(entity)
+                .Build();
+
+            var requestUri = String.Format(GetByAccountAndIdUriFormat, accountId, entity.RowKey);
+
+            await this.steps.GivenIHaveTheFollowingEntities(entity).ConfigureAwait(false);
+            await this.steps.WhenIGetAsync(requestUri).ConfigureAwait(false);
+
+            await this.steps
+                .ThenTheResponseStatusCodeShouldBe(HttpStatusCode.OK)
+                .ThenTheResponseBodyShouldBe(expected);
         }
     }
 }
