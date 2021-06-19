@@ -9,15 +9,13 @@
     using Core.Repositories.Entities;
     using Microsoft.Azure.Cosmos.Table;
 
-    internal sealed class AzureTableRepositorySteps : BaseTestSteps<AzureTableRepositorySteps>, IDisposable
+    internal sealed class AzureTableRepositorySteps : BaseTestSteps<AzureTableRepositorySteps>
     {
         private const string TableName = "ToDoItem";
 
         private readonly AzureStorageEmulator storageEmulator;
         private readonly IRepository<ToDoItem> repository;
         private readonly CloudTable table;
-
-        private bool disposed;
 
         public AzureTableRepositorySteps(AzureStorageEmulator storageEmulator)
         {
@@ -43,15 +41,9 @@
             return this.RecordExceptionAsync(() => this.repository.GetAsync(accountId, id));
         }
 
-        public void Dispose()
+        public Task WhenIGetAsync(string accountId)
         {
-            if (this.disposed)
-            {
-                return;
-            }
-
-            this.storageEmulator.Dispose();
-            this.disposed = true;
+            return this.RecordExceptionAsync(() => this.repository.GetAsync(accountId));
         }
 
         protected override AzureTableRepositorySteps GetStepClass()

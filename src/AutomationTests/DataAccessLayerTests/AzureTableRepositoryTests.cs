@@ -1,22 +1,16 @@
 ﻿namespace AutomationTests.DataAccessLayerTests
 {
-    using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using AutomationTests.TestDataBuilders;
     using AutomationTests.TestHelpers;
     using Core.Models;
-    using Core.Repositories.Entities;
     using Xunit;
 
     [Collection(nameof(StorageEmulatorCollectionFixture))]
-    public sealed class AzureTableRepositoryTests : IDisposable
+    public sealed class AzureTableRepositoryTests
     {
-        private const string RequestedAccountId = "account-1";
-        private const string RequestedToDoItemId = "todo-itemid-1";
-
         private readonly AzureTableRepositorySteps steps;
-
-        private bool disposed;
 
         public AzureTableRepositoryTests(AzureStorageEmulator storageEmulator)
         {
@@ -24,11 +18,14 @@
         }
 
         [Fact]
-        public async Task GetAsync_EntityFound_ReturnToDoItem()
+        public async Task GetAsyncWithAccountIdAndId_EntityFound_ReturnToDoItem()
         {
+            var requestedAccountId = "account-1";
+            var requestedToDoItemId = "todo-itemid-1";
+
             var entity = new ToDoItemEntityBuilder()
-                .WithRowKey(RequestedToDoItemId)
-                .WithPartitionKey(RequestedAccountId)
+                .WithRowKey(requestedToDoItemId)
+                .WithPartitionKey(requestedAccountId)
                 .Build();
 
             var expected = new ToDoItemBuilder()
@@ -36,13 +33,13 @@
                 .Build();
 
             await this.steps.GivenIHaveTheFollowingEntities(entity).ConfigureAwait(false);
-            await this.steps.WhenIGetAsync(RequestedAccountId, RequestedToDoItemId).ConfigureAwait(false);
+            await this.steps.WhenIGetAsync(requestedAccountId, requestedToDoItemId).ConfigureAwait(false);
 
             this.steps.ThenTheResultShouldBe(expected);
         }
 
         [Fact]
-        public async Task GetAsync_EntityNotFound_ReturnNull()
+        public async Task GetAsyncWithAccountIdAndId_EntityNotFound_ReturnNull()
         {
             await this.steps.WhenIGetAsync("notExists", "notExists").ConfigureAwait(false);
             this.steps
@@ -50,15 +47,31 @@
                 .ThenTheResultShouldBe((ToDoItem)null);
         }
 
-        public void Dispose()
+        [Fact]
+        public async Task GetAsyncWithAccountId_EntityFound_ReturnCollectionOfToDoItems()
         {
-            if (this.disposed)
-            {
-                return;
-            }
+            var accountId = "test account 2";
 
-            this.steps.Dispose();
-            this.disposed = true;
+            var entities = new[]
+            {
+                new ToDoItemEntityBuilder()
+                    .WithRowKey("row 1")
+                    .WithPartitionKey(accountId)
+                    .Build(),
+                new ToDoItemEntityBuilder()
+                    .WithRowKey("row 2")
+                    .WithPartitionKey(accountId)
+                    .WithIsComplete(false)
+                    .Build(),
+            };
+
+            var expected = entities
+                .Select(entity => new ToDoItemBuilder().From(entity).Build())
+                .ToArray();
+
+            await this.steps.GivenIHaveTheFollowingEntities(entities).ConfigureAwait(false);
+            await this.steps.WhenIGetAsync(accountId).ConfigureAwait(false);
+            this.steps.ThenTheResultShouldBe(expected);
         }
     }
 }
