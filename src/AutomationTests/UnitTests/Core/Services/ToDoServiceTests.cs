@@ -82,5 +82,30 @@
 
             this.steps.ThenTheResultShouldBe(todoItem);
         }
+
+        [Fact]
+        public async Task CreateAsync_NullParameter_ThrowArgumentNullException()
+        {
+            await this.steps
+                .WhenICreateAsync(null)
+                .ConfigureAwait(false);
+
+            this.steps.ThenThrownExceptionShouldBe(typeof(ArgumentNullException));
+        }
+
+        [Fact]
+        public async Task CreateAsync_ValidParameter_ToDoItemCreatedSuccesfully()
+        {
+            var toDoItem = new ToDoItemBuilder().Build();
+
+            await this.steps
+                .GivenIAmAbleToCreateToDoItem()
+                .WhenICreateAsync(toDoItem)
+                .ConfigureAwait(false);
+
+            this.steps
+                .ThenTheToDoItemShouldBeCreated(toDoItem)
+                .ThenTheReturnResultShouldBe(toDoItem);
+        }
     }
 }
