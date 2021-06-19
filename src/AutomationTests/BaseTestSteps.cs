@@ -20,7 +20,7 @@
             return this.GetStepClass();
         }
 
-        public T ThenExceptionShouldBeThrown(Type exceptionType)
+        public T ThenThrownExceptionShouldBe(Type exceptionType)
         {
             this.ThrownException.Should().NotBeNull();
             this.ThrownException.Should().BeOfType(exceptionType);

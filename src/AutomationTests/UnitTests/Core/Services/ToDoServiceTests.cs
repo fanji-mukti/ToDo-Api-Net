@@ -17,7 +17,7 @@
         {
             this.steps
                 .WhenIInitialize(isNullRepository: true)
-                .ThenExceptionShouldBeThrown(typeof(ArgumentNullException));
+                .ThenThrownExceptionShouldBe(typeof(ArgumentNullException));
         }
 
         [Theory]
@@ -29,7 +29,7 @@
                 .WhenIRetrieveAsync(requestedAccountId)
                 .ConfigureAwait(false);
 
-            this.steps.ThenExceptionShouldBeThrown(expectedExceptionType);
+            this.steps.ThenThrownExceptionShouldBe(expectedExceptionType);
         }
 
         [Fact]
@@ -67,7 +67,7 @@
                 .ConfigureAwait(false);
 
             this.steps
-                .ThenExceptionShouldBeThrown(expectedExceptionType);
+                .ThenThrownExceptionShouldBe(expectedExceptionType);
         }
 
         [Fact]
