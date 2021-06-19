@@ -5,7 +5,7 @@
 
     public sealed class AzureStorageEmulator : IDisposable
     {
-        private const string EmulatorConnectionString = "UserDevelopmentStorage=true";
+        public const string EmulatorConnectionString = "UseDevelopmentStorage=true";
 
         private bool disposed;
 
