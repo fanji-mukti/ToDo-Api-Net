@@ -32,11 +32,11 @@
         /// <summary>
         /// Gets the description of the to-do item.
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; init; }
 
         /// <summary>
         /// Gets a value indicating whether the to-do item is complete.
         /// </summary>
-        public bool IsComplete { get; set; }
+        public bool IsComplete { get; init; }
     }
 }
