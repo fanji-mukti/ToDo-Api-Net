@@ -1,4 +1,4 @@
-﻿namespace AutomationTests
+﻿namespace AutomationTests.TestHelpers
 {
     using System;
     using System.Diagnostics;
@@ -35,7 +35,7 @@
             if (!IsProcessRunning())
             {
                 ExecuteProcess(ProcessCommand.Init);
-                ExecuteProcess(ProcessCommand.Start)
+                ExecuteProcess(ProcessCommand.Start);
             }
         }
 
