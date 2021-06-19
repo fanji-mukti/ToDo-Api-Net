@@ -1,7 +1,10 @@
 ﻿namespace AutomationTests.IntegrationTests
 {
+    using System;
+    using System.Linq.Expressions;
     using System.Net;
     using System.Net.Http;
+    using System.Text;
     using System.Threading.Tasks;
     using AutomationTests.TestHelpers;
     using Core.Repositories.Entities;
@@ -9,6 +12,7 @@
     using Microsoft.AspNetCore.Mvc.Testing;
     using Microsoft.Azure.Cosmos.Table;
     using Newtonsoft.Json;
+    using WebApi.Models.V1;
 
     internal sealed class WebApiSteps : BaseTestSteps<WebApiSteps>
     {
@@ -45,6 +49,13 @@
             return this.RecordExceptionAsync(() => this.client.GetAsync(requestUri));
         }
 
+        public Task WhenIPostAsync(string requestUri, ToDoItemRequest request)
+        {
+            var jsonBody = JsonConvert.SerializeObject(request);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+            return this.RecordExceptionAsync(() => this.client.PostAsync(requestUri, content));
+        }
+
         public WebApiSteps ThenTheResponseStatusCodeShouldBe(HttpStatusCode expected)
         {
             var response = (HttpResponseMessage)this.Result;
@@ -54,17 +65,25 @@
 
         public async Task ThenTheResponseBodyShouldBe<T>(T expected)
         { 
-            var response = (HttpResponseMessage)this.Result;
-            var stringContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var responseBody = JsonConvert.DeserializeObject<T>(stringContent);
-
+            var responseBody = await GetResponseBodyAsync<T>((HttpResponseMessage)this.Result).ConfigureAwait(false);
             responseBody.Should().BeEquivalentTo(expected, options => options.RespectingRuntimeTypes());
         }
 
+        public async Task ThenTheResponseBodyShouldBe(ToDoItemResponse expected, Expression<Func<ToDoItemResponse, object>> excludeExpression)
+        { 
+            var responseBody = await GetResponseBodyAsync<ToDoItemResponse>((HttpResponseMessage)this.Result).ConfigureAwait(false);
+            responseBody.Should().BeEquivalentTo(expected, options => options.Excluding(x => x.Id));
+        }
 
         protected override WebApiSteps GetStepClass()
         {
             return this;
+        }
+
+        private static async Task<T> GetResponseBodyAsync<T>(HttpResponseMessage response)
+        {
+            var stringContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<T>(stringContent);
         }
     }
 }

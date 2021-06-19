@@ -12,7 +12,7 @@
     [Collection(nameof(StorageEmulatorCollectionFixture))]
     public sealed class WebApiTests : IClassFixture<WebApplicationFactory<WebApi.Startup>>
     {
-        private const string GetByAccountUriFormat = "api/v1.0/accounts/{0}/ToDoItems";
+        private const string ToDoItemsUriFormat = "api/v1.0/accounts/{0}/ToDoItems";
         private const string GetByAccountAndIdUriFormat = "api/v1.0/accounts/{0}/ToDoItems/{1}";
 
         private readonly WebApiSteps steps;
@@ -42,7 +42,7 @@
             var expected = entities
                 .Select(entity => new ToDoItemResponseBuilder().From(entity).Build());
 
-            var requestUri = String.Format(GetByAccountUriFormat, accountId);
+            var requestUri = String.Format(ToDoItemsUriFormat, accountId);
 
             await this.steps.GivenIHaveTheFollowingEntities(entities).ConfigureAwait(false);
             await this.steps.WhenIGetAsync(requestUri).ConfigureAwait(false);
@@ -75,6 +75,26 @@
             await this.steps
                 .ThenTheResponseStatusCodeShouldBe(HttpStatusCode.OK)
                 .ThenTheResponseBodyShouldBe(expected);
+        }
+
+        [Fact]
+        public async Task PostAsync_ReturnCreated()
+        {
+            var accountId = "webapitest-post";
+
+            var request = new ToDoItemRequestBuilder().Build();
+            var expected = new ToDoItemResponseBuilder()
+                .From(request)
+                .WithAccountId(accountId)
+                .Build();
+
+            var requestUri = String.Format(ToDoItemsUriFormat, accountId);
+
+            await this.steps.WhenIPostAsync(requestUri, request).ConfigureAwait(false);
+
+            await this.steps
+                .ThenTheResponseStatusCodeShouldBe(HttpStatusCode.Created)
+                .ThenTheResponseBodyShouldBe(expected, exclude => exclude.Id);
         }
     }
 }
