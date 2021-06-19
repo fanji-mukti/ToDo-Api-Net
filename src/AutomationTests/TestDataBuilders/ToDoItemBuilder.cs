@@ -1,6 +1,7 @@
 ﻿namespace AutomationTests.TestDataBuilders
 {
     using Core.Models;
+    using Core.Repositories.Entities;
     using WebApi.Models.V1;
 
     internal sealed class ToDoItemBuilder
@@ -46,6 +47,16 @@
             this.name = request.Name;
             this.description = request.Description;
             this.isComplete = request.IsComplete;
+            return this;
+        }
+
+        public ToDoItemBuilder From(ToDoItemEntity entity)
+        {
+            this.id = entity.RowKey;
+            this.accountId = entity.PartitionKey;
+            this.name = entity.Name;
+            this.description = entity.Description;
+            this.isComplete = entity.IsComplete;
             return this;
         }
 
