@@ -2,9 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using Core.Models;
+    using Core.Repositories;
     using EnsureThat;
 
     /// <summary>
@@ -12,42 +12,38 @@
     /// </summary>
     public sealed class ToDoService : IToDoService
     {
-        private static readonly List<ToDoItem> ToDoItems = new List<ToDoItem>()
+        private readonly IRepository<ToDoItem> repository;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ToDoService"/> class.
+        /// </summary>
+        /// <param name="repository">The <see cref="IRepository{ToDoItem}"/>.</param>
+        public ToDoService(IRepository<ToDoItem> repository)
         {
-            new ToDoItem
-            {
-                Id = "1",
-                AccountId = "account_1",
-                Name = "Learn .Net 5",
-                Description = "Learn .Net 5 by creating a simple CRUD Web API",
-                IsComplete = false,
-            },
-            new ToDoItem
-            {
-                Id = "2",
-                AccountId = "account_1",
-                Name = "Add Unit Test",
-                Description = "Add unit test for the Web API project",
-                IsComplete = false,
-            },
-        };
+            this.repository = EnsureArg.IsNotNull(repository);
+        }
 
         /// <inheritdoc/>
         public Task<ToDoItem> CreateAsync(ToDoItem itemToCreate)
         {
             EnsureArg.IsNotNull(itemToCreate, nameof(itemToCreate));
 
-            var createItem = new ToDoItem
-            {
-                Id = Guid.NewGuid().ToString(),
-                AccountId = itemToCreate.AccountId,
-                Name = itemToCreate.Name,
-                Description = itemToCreate.Description,
-                IsComplete = itemToCreate.IsComplete,
-            };
+            return InsertAsync();
 
-            ToDoItems.Add(createItem);
-            return Task.FromResult(createItem);
+            async Task<ToDoItem> InsertAsync()
+            {
+                var createItem = new ToDoItem
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    AccountId = itemToCreate.AccountId,
+                    Name = itemToCreate.Name,
+                    Description = itemToCreate.Description,
+                    IsComplete = itemToCreate.IsComplete,
+                };
+
+                await this.repository.AddAsync(createItem).ConfigureAwait(false);
+                return createItem;
+            }
         }
 
         /// <inheritdoc/>
@@ -55,10 +51,7 @@
         {
             EnsureArg.IsNotNullOrWhiteSpace(accountId, nameof(accountId));
 
-            var selectedItems = ToDoItems
-                .Where(item => item.AccountId.Equals(accountId, StringComparison.OrdinalIgnoreCase));
-
-            return Task.FromResult(selectedItems);
+            return this.repository.GetAsync(accountId);
         }
 
         /// <inheritdoc/>
@@ -67,11 +60,7 @@
             EnsureArg.IsNotNullOrWhiteSpace(accountId, nameof(accountId));
             EnsureArg.IsNotNullOrWhiteSpace(id, nameof(id));
 
-            var selectedItem = ToDoItems
-                .SingleOrDefault(item => item.AccountId.Equals(accountId, StringComparison.OrdinalIgnoreCase)
-                    && item.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
-
-            return Task.FromResult(selectedItem);
+            return this.repository.GetAsync(accountId, id);
         }
 
         /// <inheritdoc/>
@@ -79,15 +68,7 @@
         {
             EnsureArg.IsNotNull(itemToUpdate, nameof(itemToUpdate));
 
-            var selectedItem = ToDoItems
-                .Single(item => item.AccountId.Equals(itemToUpdate.AccountId, StringComparison.OrdinalIgnoreCase)
-                    && item.Id.Equals(itemToUpdate.Id, StringComparison.OrdinalIgnoreCase));
-
-            selectedItem.Name = itemToUpdate.Name;
-            selectedItem.Description = itemToUpdate.Description;
-            selectedItem.IsComplete = itemToUpdate.IsComplete;
-
-            return Task.CompletedTask;
+            return this.repository.UpdateAsync(itemToUpdate);
         }
     }
 }
