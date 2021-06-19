@@ -4,6 +4,7 @@
     using Core.Models;
     using Core.Repositories;
     using Core.Services;
+    using EnsureThat;
     using WebApi.Mappings;
 
     /// <summary>
@@ -11,13 +12,22 @@
     /// </summary>
     public sealed class ContainerModule : Module
     {
+        private readonly string storageConnectionString;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ContainerModule"/> class.
+        /// </summary>
+        /// <param name="connectionString">The storage connection string.</param>
+        public ContainerModule(string connectionString)
+        {
+            this.storageConnectionString = EnsureArg.IsNotNullOrWhiteSpace(connectionString);
+        }
+
         /// <inheritdoc/>
         protected override void Load(ContainerBuilder builder)
         {
-            var connectionString = @"DefaultEndpointsProtocol=https;AccountName=muktisandboxstorage;AccountKey=LpYqeX/5+lI74G5mD29wA+Cwzktd3z12vSKsdHkNfQ9jFNblH3zeDoh4o4SwpaZK0hU99PbT1kBn2oBJTTUcyA==;EndpointSuffix=core.windows.net";
-
             builder
-                .Register(c => RepositoryFactory.CreateToDoItemRepository(connectionString))
+                .Register(c => RepositoryFactory.CreateToDoItemRepository(this.storageConnectionString))
                 .As<IRepository<ToDoItem>>()
                 .SingleInstance();
 

@@ -40,7 +40,8 @@ namespace WebApi
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterModule(new ContainerModule());
+            var section = this.Configuration.GetSection("StorageConnectionString");
+            builder.RegisterModule(new ContainerModule(section.Value));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
