@@ -20,6 +20,19 @@
             return this.GetStepClass();
         }
 
+        public T ThenExceptionShouldBeThrown(Type exceptionType)
+        {
+            this.ThrownException.Should().NotBeNull();
+            this.ThrownException.Should().BeOfType(exceptionType);
+            return this.GetStepClass();
+        }
+
+        protected T RecordException(Action testCode)
+        {
+            this.ThrownException = Record.Exception(testCode);
+            return this.GetStepClass();
+        }
+
         protected async Task RecordExceptionAsync(Func<Task> testCode)
         {
             this.ThrownException = await Record

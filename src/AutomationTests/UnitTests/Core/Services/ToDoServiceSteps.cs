@@ -15,6 +15,15 @@
             this.toDoService = new ToDoService(this.mockRepository.Object);
         }
 
+        public ToDoServiceSteps WhenIInitialize(bool isNullRepository)
+        {
+            var repo = isNullRepository ?
+                null :
+                this.mockRepository.Object;
+
+            return this.RecordException(() => new ToDoService(repo));
+        }
+
         protected override ToDoServiceSteps GetStepClass()
         {
             return this;
