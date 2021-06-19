@@ -51,6 +51,11 @@
             return this.RecordExceptionAsync(() => this.repository.AddAsync(toDoItem));
         }
 
+        public Task WhenIUpdateAsync(ToDoItem toDoItem)
+        {
+            return this.RecordExceptionAsync(() => this.repository.UpdateAsync(toDoItem));
+        }
+
         protected override AzureTableRepositorySteps GetStepClass()
         {
             return this;

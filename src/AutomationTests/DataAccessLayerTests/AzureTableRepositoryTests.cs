@@ -94,5 +94,26 @@
             await this.steps.WhenIGetAsync(toDoItem.AccountId, toDoItem.Id).ConfigureAwait(false);
             this.steps.ThenTheResultShouldBe(toDoItem);
         }
+
+        [Fact]
+        public async Task UpdateAsync_ValidParameter_ToDoItemUpdatedSuccessfully()
+        {
+            var entity = new ToDoItemEntityBuilder()
+                .WithRowKey("update test")
+                .WithPartitionKey("update test account")
+                .Build();
+
+            var updateRequest = new ToDoItemBuilder()
+                .From(entity)
+                .WithDescription("updated description")
+                .WithName("updated name")
+                .WithIsComplete(false)
+                .Build();
+
+            await this.steps.GivenIHaveTheFollowingEntities(entity).ConfigureAwait(false);
+            await this.steps.WhenIUpdateAsync(updateRequest).ConfigureAwait(false);
+            await this.steps.WhenIGetAsync(entity.PartitionKey, entity.RowKey).ConfigureAwait(false);
+            this.steps.ThenTheResultShouldBe(updateRequest);
+        }
     }
 }
