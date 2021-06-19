@@ -1,8 +1,8 @@
 ﻿namespace AutomationTests.UnitTests.Core.Services
 {
-    using AutomationTests.TestDataBuilders;
     using System;
     using System.Threading.Tasks;
+    using AutomationTests.TestDataBuilders;
     using Xunit;
 
     public sealed class ToDoServiceTests
