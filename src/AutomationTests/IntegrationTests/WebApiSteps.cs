@@ -9,6 +9,7 @@
     using AutomationTests.TestHelpers;
     using Core.Repositories.Entities;
     using FluentAssertions;
+    using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc.Testing;
     using Microsoft.Azure.Cosmos.Table;
     using Newtonsoft.Json;
@@ -59,6 +60,12 @@
         {
             var content = CreateStringContent(request);
             return this.RecordExceptionAsync(() => this.client.PutAsync(requestUri, content));
+        }
+
+        public Task WhenIPatchAsync(string requestUri, JsonPatchDocument<IUpdatableToDoItemDTO> jsonPatchDocument)
+        {
+            var content = CreateStringContent(jsonPatchDocument);
+            return this.RecordExceptionAsync(() => this.client.PatchAsync(requestUri, content));
         }
 
         public WebApiSteps ThenTheResponseStatusCodeShouldBe(HttpStatusCode expected)

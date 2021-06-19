@@ -129,5 +129,36 @@
             await this.steps.WhenIGetAsync(requestUri).ConfigureAwait(false);
             await this.steps.ThenTheResponseBodyShouldBe(expected).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task PatchAsync_ReturnOk()
+        {
+            var accountId = "webapitest-patch";
+            var patchedValue = "patched name";
+
+            var entity = new ToDoItemEntityBuilder()
+                .WithRowKey($"{accountId}-1")
+                .WithPartitionKey(accountId)
+                .Build();
+
+            var patchRequest = new ToDoItemPatchRequestBuilder()
+                .WithName(patchedValue)
+                .Build();
+
+            var expected = new ToDoItemResponseBuilder()
+                .From(entity)
+                .WithName(patchedValue)
+                .Build();
+            
+            var requestUri = String.Format(GetByAccountAndIdUriFormat, accountId, entity.RowKey);
+
+            await this.steps.GivenIHaveTheFollowingEntities(entity).ConfigureAwait(false);
+            await this.steps.WhenIPatchAsync(requestUri, patchRequest).ConfigureAwait(false);
+
+            await this.steps
+                .ThenTheResponseStatusCodeShouldBe(HttpStatusCode.OK)
+                .ThenTheResponseBodyShouldBe(expected)
+                .ConfigureAwait(false);
+        }
     }
 }
