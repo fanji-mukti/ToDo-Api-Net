@@ -14,7 +14,7 @@
 
         protected abstract T GetStepClass();
 
-        public T ThenIShouldExpectTheResultToBe<U>(U expected)
+        public T ThenTheResultShouldBe<U>(U expected)
         {
             this.Result.Should().BeEquivalentTo(expected, options => options.RespectingRuntimeTypes());
             return this.GetStepClass();
