@@ -1,7 +1,7 @@
 ﻿namespace WebApi.Models.V1
 {
     /// <summary>
-    /// A class representing of to-do item request.
+    /// Represents to-do item request.
     /// </summary>
     public sealed class ToDoItemRequest : IUpdatableToDoItemDTO
     {
