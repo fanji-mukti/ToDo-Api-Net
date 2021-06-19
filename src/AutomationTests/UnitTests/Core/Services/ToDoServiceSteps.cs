@@ -26,6 +26,15 @@
             return this;
         }
 
+        public ToDoServiceSteps GivenIHaveTheFollowingToDoItem(string accountId, string id, ToDoItem toDoItem)
+        {
+            this.mockRepository
+                .Setup(x => x.GetAsync(accountId, id))
+                .ReturnsAsync(toDoItem);
+
+            return this;
+        }
+
         public ToDoServiceSteps WhenIInitialize(bool isNullRepository)
         {
             var repo = isNullRepository ?
@@ -38,6 +47,11 @@
         public Task WhenIRetrieveAsync(string accountId)
         {
             return this.RecordExceptionAsync(() => this.toDoService.RetrieveAsync(accountId));
+        }
+
+        public Task WhenIRetrieveAsync(string accountId, string id)
+        {
+            return this.RecordExceptionAsync(() => this.toDoService.RetrieveAsync(accountId, id));
         }
 
         protected override ToDoServiceSteps GetStepClass()

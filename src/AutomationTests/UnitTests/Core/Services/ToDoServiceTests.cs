@@ -54,5 +54,33 @@
             this.steps
                 .ThenTheResultShouldBe(toDoItems);
         }
+
+        [Theory]
+        [InlineData(null, RequestedToDoItemId, typeof(ArgumentNullException))]
+        [InlineData("", RequestedToDoItemId, typeof(ArgumentException))]
+        [InlineData(RequestedAccountId, null, typeof(ArgumentNullException))]
+        [InlineData(RequestedAccountId, "", typeof(ArgumentException))]
+        public async Task RetrieveAsyncWithAccountIdAndId_InvalidParameter_ThrowException(string accountId, string id, Type expectedExceptionType)
+        {
+            await this.steps
+                .WhenIRetrieveAsync(accountId, id)
+                .ConfigureAwait(false);
+
+            this.steps
+                .ThenExceptionShouldBeThrown(expectedExceptionType);
+        }
+
+        [Fact]
+        public async Task RetrieveAsyncWithAccountIdAndId_ValidParameter_ReturnToDoItem()
+        {
+            var todoItem = new ToDoItemBuilder().Build();
+
+            await this.steps
+                .GivenIHaveTheFollowingToDoItem(RequestedAccountId, RequestedToDoItemId, todoItem)
+                .WhenIRetrieveAsync(RequestedAccountId, RequestedToDoItemId)
+                .ConfigureAwait(false);
+
+            this.steps.ThenTheResultShouldBe(todoItem);
+        }
     }
 }
