@@ -27,6 +27,12 @@
             return this.GetStepClass();
         }
 
+        public T ThenNoExceptionShouldBeThrown()
+        {
+            this.ThrownException.Should().BeNull();
+            return this.GetStepClass();
+        }
+
         protected T RecordException(Action testCode)
         {
             this.ThrownException = Record.Exception(testCode);

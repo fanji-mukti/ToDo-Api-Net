@@ -13,7 +13,7 @@
         private readonly Mock<IRepository<ToDoItem>> mockRepository = new();
         private readonly ToDoService toDoService;
         
-        private ToDoItem createdItem;
+        private ToDoItem actualToDoItem;
 
         public ToDoServiceSteps()
         {
@@ -44,8 +44,21 @@
                 .Setup(x => x.AddAsync(It.IsAny<ToDoItem>()))
                 .Callback<ToDoItem>(request =>
                 {
-                    this.createdItem = request;
+                    this.actualToDoItem = request;
                 });
+
+            return this;
+        }
+
+        public ToDoServiceSteps GivenIAmAbleToUpdateToDoItem()
+        {
+            this.mockRepository
+                .Setup(x => x.UpdateAsync(It.IsAny<ToDoItem>()))
+                .Callback<ToDoItem>(request =>
+                {
+                    this.actualToDoItem = request;
+                })
+                .Returns(Task.CompletedTask);
 
             return this;
         }
@@ -74,9 +87,20 @@
             return this.RecordExceptionAsync(() => this.toDoService.CreateAsync(toDoItem));
         }
 
+        public Task WhenIUpdateAsync(ToDoItem toDoItem)
+        {
+            return this.RecordExceptionAsync(() => this.toDoService.UpdateAsync(toDoItem));
+        }
+
         public ToDoServiceSteps ThenTheToDoItemShouldBeCreated(ToDoItem expected)
         {
-            this.createdItem.Should().BeEquivalentTo(expected, options => options.Excluding(x => x.Id));
+            this.actualToDoItem.Should().BeEquivalentTo(expected, options => options.Excluding(x => x.Id));
+            return this;
+        }
+
+        public ToDoServiceSteps ThenTheToDoItemShouldBeUpdatedAs(ToDoItem expected)
+        {
+            this.actualToDoItem.Should().BeEquivalentTo(expected, options => options.Excluding(x => x.Id));
             return this;
         }
 

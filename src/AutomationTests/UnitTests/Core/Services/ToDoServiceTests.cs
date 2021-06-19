@@ -107,5 +107,30 @@
                 .ThenTheToDoItemShouldBeCreated(toDoItem)
                 .ThenTheReturnResultShouldBe(toDoItem);
         }
+
+        [Fact]
+        public async Task UpdateAsync_NullParameter_ThrowArgumentNullException()
+        {
+            await this.steps
+                .WhenIUpdateAsync(null)
+                .ConfigureAwait(false);
+
+            this.steps.ThenThrownExceptionShouldBe(typeof(ArgumentNullException));
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ValidParameter_ToDoItemUpdatedSuccessfully()
+        {
+            var toDoItem = new ToDoItemBuilder().Build();
+
+            await this.steps
+                .GivenIAmAbleToUpdateToDoItem()
+                .WhenIUpdateAsync(toDoItem)
+                .ConfigureAwait(false);
+
+            this.steps
+                .ThenNoExceptionShouldBeThrown()
+                .ThenTheToDoItemShouldBeUpdatedAs(toDoItem);
+        }
     }
 }
